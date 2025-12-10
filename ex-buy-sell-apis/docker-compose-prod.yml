@@ -1,0 +1,56 @@
+networks:
+  nest_network:   # explicitly defined network
+    driver: bridge
+
+services:
+
+  api:
+    container_name: ex-buy-sell-api
+    image: faizanraodev/ex-buy-sell-api:latest
+    ports:
+      - "1230:1230"
+    environment:
+      DATABASE_URL: mongodb+srv://raofaizanaries1920:5gZrpWrHhtT9dp3Y@ex-buy-sell.z7uaybl.mongodb.net/ex-buy-sell-db
+      DATABASE_PASSWORD: 5gZrpWrHhtT9dp3Y
+      PORT: 1230
+      DEFAULT_ROLE: USER
+      JWT_SECRET: ThisIsTheSecretThatisUseForJWT
+      JWT_REFRESH_SECRET: ThisIsTheSecretThatisUseForJWTRefresh
+      RABBIT_MQ: rabbitmq:5672
+      REDIS_HOST: redis:6379
+      SENDGRID_API_KEY: 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
+      EMAIL_SERVICE_FROM: pythonmaster513@gmail.com
+      AGORA_APP_ID: 5111a27e30924ac68e8d788bf1879340
+      AGORA_APP_CERTIFICATE: fde67abea77e405a90147a97d6c08535
+    depends_on:
+      - redis
+      - rabbitmq
+    networks:
+      - nest_network
+    restart: unless-stopped
+  rabbitmq: # RabbitMQ
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI
+    restart: unless-stopped
+    depends_on:
+      - redis
+    networks:
+      - nest_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_data:/data
+    command: redis-server --appendonly yes  # Enables data persistence (AOF)
+    networks:
+      - nest_network
+volumes:
+  redis_data:

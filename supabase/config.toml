@@ -1,0 +1,7 @@
+project_id = "jmgjyjsvmrfkxamwnjwh"
+
+[functions.proxy-api]
+verify_jwt = false
+
+[functions.get-users-with-emails]
+verify_jwt = true

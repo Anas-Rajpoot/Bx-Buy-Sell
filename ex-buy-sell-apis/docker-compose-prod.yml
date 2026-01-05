@@ -10,18 +10,18 @@ services:
     ports:
       - "1230:1230"
     environment:
-      DATABASE_URL: mongodb+srv://raofaizanaries1920:5gZrpWrHhtT9dp3Y@ex-buy-sell.z7uaybl.mongodb.net/ex-buy-sell-db
-      DATABASE_PASSWORD: 5gZrpWrHhtT9dp3Y
-      PORT: 1230
-      DEFAULT_ROLE: USER
-      JWT_SECRET: ThisIsTheSecretThatisUseForJWT
-      JWT_REFRESH_SECRET: ThisIsTheSecretThatisUseForJWTRefresh
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      PORT: ${PORT:-1230}
+      DEFAULT_ROLE: ${DEFAULT_ROLE:-USER}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
       RABBIT_MQ: rabbitmq:5672
       REDIS_HOST: redis:6379
-      SENDGRID_API_KEY: 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
-      EMAIL_SERVICE_FROM: pythonmaster513@gmail.com
-      AGORA_APP_ID: 5111a27e30924ac68e8d788bf1879340
-      AGORA_APP_CERTIFICATE: fde67abea77e405a90147a97d6c08535
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      EMAIL_SERVICE_FROM: ${EMAIL_SERVICE_FROM}
+      AGORA_APP_ID: ${AGORA_APP_ID}
+      AGORA_APP_CERTIFICATE: ${AGORA_APP_CERTIFICATE}
     depends_on:
       - redis
       - rabbitmq

@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Environment variables (IMPORTANT: Never commit these!)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +30,30 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Cursor IDE
+.cursor/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads and temporary files
+uploads/*
+!uploads/.gitkeep
+ex-buy-sell-apis/uploads/*
+!ex-buy-sell-apis/uploads/.gitkeep
+
+# Redis data
+redis_data/*
+!redis_data/.gitkeep
+
+# Build files
+*.tsbuildinfo
+build/
+.expo/
+
+# OS files
+Thumbs.db
+.DS_Store

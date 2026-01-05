@@ -310,10 +310,25 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen w-full bg-background">
-      <DashboardSidebar activeStep={activeStep} onStepChange={setActiveStep} />
-      <div className="flex-1 flex flex-col">
-        <DashboardHeader user={user} />
-        <main className="flex-1 p-8">
+      {/* Desktop Sidebar */}
+      <DashboardSidebar activeStep={activeStep} onStepChange={setActiveStep} isMobile={false} />
+      
+      <div className="flex-1 flex flex-col w-full overflow-hidden">
+        {/* Mobile Header with Hamburger Menu */}
+        <div className="md:hidden border-b border-border bg-background sticky top-0 z-40">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <DashboardSidebar activeStep={activeStep} onStepChange={setActiveStep} isMobile={true} />
+            <h1 className="text-lg font-semibold">Create Listing</h1>
+          </div>
+        </div>
+        
+        {/* Desktop Header */}
+        <div className="hidden md:block">
+          <DashboardHeader user={user} />
+        </div>
+        
+        {/* Main Content */}
+        <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">
           {renderStep()}
         </main>
       </div>

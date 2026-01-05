@@ -95,6 +95,27 @@ export const PackagesStep = ({ formData, listingId, onBack }: PackagesStepProps)
 
   // Helper function to transform financials
   const transformFinancials = () => {
+    // Check for new table format (financialData, rowLabels, columnLabels)
+    if (formData.financialData && formData.rowLabels && formData.columnLabels) {
+      // Store the table structure as JSON in revenue_amount field
+      // Use special marker name and 'yearly' type to be backend-compatible
+      const tableData = {
+        financialType: formData.financialType || 'detailed',
+        rowLabels: formData.rowLabels,
+        columnLabels: formData.columnLabels,
+        financialData: formData.financialData,
+      };
+      
+      return [{
+        type: 'yearly' as const, // Backend requires 'monthly' or 'yearly'
+        name: '__FINANCIAL_TABLE__', // Special marker name
+        revenue_amount: JSON.stringify(tableData), // Store JSON data here
+        annual_cost: '0',
+        net_profit: '0',
+      }];
+    }
+    
+    // Fallback to old format for backward compatibility
     if (!formData.months || !Array.isArray(formData.months)) return [];
     
     return formData.months
@@ -205,6 +226,7 @@ export const PackagesStep = ({ formData, listingId, onBack }: PackagesStepProps)
       
       // Transform financials
       const financialsArray = transformFinancials();
+      console.log('💰 Transformed financials array:', JSON.stringify(financialsArray, null, 2));
       
       // Prepare listing data for API
       // Backend REQUIRES these fields as arrays (even if empty):

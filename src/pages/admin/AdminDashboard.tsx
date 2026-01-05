@@ -11,6 +11,7 @@ import { NewListingsChart } from "@/components/admin/charts/NewListingsChart";
 import { RevenueChart } from "@/components/admin/charts/RevenueChart";
 import { ListingsOverviewChart } from "@/components/admin/charts/ListingsOverviewChart";
 import { useAdminDashboardStats } from "@/hooks/useAdminDashboardStats";
+import { Sheet } from "@/components/ui/sheet";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -52,16 +53,17 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <AdminSidebar />
+      {/* Desktop Sidebar */}
+      <AdminSidebar isMobile={false} />
       
-      <main className="flex-1">
+      <main className="flex-1 w-full min-w-0 overflow-x-hidden">
         <AdminHeader title="Dashboard" />
 
-        <div className="p-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Traffic Statistics</h2>
+        <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <h2 className="text-xl sm:text-2xl font-bold">Traffic Statistics</h2>
             <Select defaultValue="monthly">
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -72,7 +74,7 @@ export default function AdminDashboard() {
             </Select>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <StatCard 
               title="Total Users" 
               value={statsLoading ? "..." : stats?.totalUsers.toLocaleString() || "0"} 
@@ -99,7 +101,7 @@ export default function AdminDashboard() {
             />
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
             <VisitorsChart />
             <NewListingsChart />
           </div>

@@ -105,6 +105,7 @@ model User {
   ChatMonitor    ChatMonitor[]    @relation("ChatMonitor")
   ActivityLog    ActivityLog[]
   AdminFinancial AdminFinancial[]
+  Notification   Notification[]
 }
 
 model ActivityLog {
@@ -392,20 +393,22 @@ model Chat {
   updatedAt     DateTime        @updatedAt
   offer         String? // Optional offer text/ID made by seller
   status        ChatStatus      @default(ACTIVE)
-  chatLabel     ChatLabel?
+  chatLabels    ChatLabel[]
   SupportTicket SupportTicket[]
 }
 
 model ChatLabel {
   id     String @id @default(uuid()) @map("_id")
-  chatId String @unique
-  userId String @unique
+  chatId String
+  userId String
 
   label      ChatLabelType?
   chat       Chat           @relation(fields: [chatId], references: [id])
   user       User           @relation(fields: [userId], references: [id])
   created_at DateTime       @default(now())
   updated_at DateTime       @updatedAt
+
+  @@unique([chatId, userId])
 }
 
 model Message {
@@ -477,4 +480,18 @@ model TicketFile {
   updatedAt       DateTime       @updatedAt
   SupportTicket   SupportTicket? @relation(fields: [supportTicketId], references: [id])
   supportTicketId String?        @unique
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("info") // info, success, warning, error, message
+  read      Boolean  @default(false)
+  link      String?
+  chatId    String?  // Link to chat if it's a message notification
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

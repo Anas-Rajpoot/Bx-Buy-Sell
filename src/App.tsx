@@ -17,6 +17,7 @@ import PhoneVerification from "./pages/PhoneVerification";
 import VerifyOTP from "./pages/VerifyOTP";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminForgotPassword from "./pages/admin/AdminForgotPassword";
 import AdminVerifyOTP from "./pages/admin/AdminVerifyOTP";
@@ -37,6 +38,7 @@ import AdminDetectWords from "./pages/admin/AdminDetectWords";
 import AdminChatList from "./pages/admin/AdminChatList";
 import AdminChatAnalytics from "./pages/admin/AdminChatAnalytics";
 import AdminContentManagement from "./pages/admin/AdminContentManagement";
+import AdminSettings from "./pages/admin/AdminSettings";
 import AllListings from "./pages/AllListings";
 import ListingDetail from "./pages/ListingDetail";
 import HowToBuy from "./pages/HowToBuy";
@@ -67,6 +69,7 @@ const App = () => (
           <Route path="/chat" element={<Chat />} />
           <Route path="/verify-account" element={<VerifyAccount />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/phone-verification" element={<PhoneVerification />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
@@ -93,6 +96,7 @@ const App = () => (
           <Route path="/admin/monitoring-alerts" element={<AdminMonitoringAlerts />} />
           <Route path="/admin/detect-words" element={<AdminDetectWords />} />
           <Route path="/admin/content/*" element={<AdminContentManagement />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

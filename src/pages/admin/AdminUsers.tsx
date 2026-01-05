@@ -219,28 +219,30 @@ export default function AdminUsers() {
               </div>
             ) : (
               <>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border hover:bg-transparent">
-                      <TableHead className="text-muted-foreground">ID</TableHead>
-                      <TableHead className="text-muted-foreground">User name</TableHead>
-                      <TableHead className="text-muted-foreground">Email</TableHead>
-                      <TableHead className="text-muted-foreground">Phone Number</TableHead>
-                      <TableHead className="text-muted-foreground">Listings</TableHead>
-                      <TableHead className="text-muted-foreground">Registration date</TableHead>
-                      <TableHead className="text-muted-foreground">Verification</TableHead>
-                      <TableHead className="text-muted-foreground">Status</TableHead>
-                      <TableHead className="text-muted-foreground">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-border hover:bg-transparent">
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm">ID</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm">User name</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm hidden md:table-cell">Email</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm hidden lg:table-cell">Phone Number</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm hidden sm:table-cell">Listings</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm hidden lg:table-cell">Registration date</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm hidden md:table-cell">Verification</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm">Status</TableHead>
+                          <TableHead className="text-muted-foreground whitespace-nowrap text-xs sm:text-sm">Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                     {filteredUsers.map((user, index) => (
                       <TableRow 
                         key={user.id}
                         className="border-border hover:bg-muted/5"
                       >
-                        <TableCell className="font-medium">{index + 1}</TableCell>
-                        <TableCell>
+                        <TableCell className="font-medium whitespace-nowrap">{index + 1}</TableCell>
+                        <TableCell className="whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="relative">
                               <Avatar className="h-10 w-10">
@@ -258,11 +260,11 @@ export default function AdminUsers() {
                             <span className="font-medium">{user.full_name || "Unknown"}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                        <TableCell className="text-muted-foreground">{user.phone || "-"}</TableCell>
-                        <TableCell>{user.listings_count}</TableCell>
-                        <TableCell className="text-muted-foreground">{formatDate(user.created_at)}</TableCell>
-                        <TableCell>
+                        <TableCell className="text-muted-foreground whitespace-nowrap hidden md:table-cell">{user.email}</TableCell>
+                        <TableCell className="text-muted-foreground whitespace-nowrap hidden lg:table-cell">{user.phone || "-"}</TableCell>
+                        <TableCell className="whitespace-nowrap hidden sm:table-cell">{user.listings_count}</TableCell>
+                        <TableCell className="text-muted-foreground whitespace-nowrap hidden lg:table-cell">{formatDate(user.created_at)}</TableCell>
+                        <TableCell className="hidden md:table-cell">
                           <div className="flex flex-col gap-1">
                             {user.phone_confirmed_at && (
                               <div className="flex items-center gap-1">
@@ -278,8 +280,8 @@ export default function AdminUsers() {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell>{getStatusBadge(user)}</TableCell>
-                        <TableCell>
+                        <TableCell className="whitespace-nowrap">{getStatusBadge(user)}</TableCell>
+                        <TableCell className="whitespace-nowrap">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button 
@@ -327,10 +329,12 @@ export default function AdminUsers() {
                         </TableCell>
                       </TableRow>
                     ))}
-                  </TableBody>
-                </Table>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
 
-                <div className="flex items-center justify-between px-6 py-4 border-t border-border">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 py-4 border-t border-border">
                   <p className="text-sm text-muted-foreground">
                     Showing {filteredUsers.length} of {users?.length || 0}
                   </p>

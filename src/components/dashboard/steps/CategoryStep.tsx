@@ -58,11 +58,11 @@ export const CategoryStep = ({ formData, onNext }: CategoryStepProps) => {
 
   if (loading) {
     return (
-      <div className="max-w-5xl">
-        <h1 className="text-3xl font-bold mb-2">Select Category</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+      <div className="max-w-5xl w-full">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Select Category</h1>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-48 rounded-2xl border-2 border-border bg-card animate-pulse" />
+            <div key={i} className="h-40 sm:h-48 rounded-xl sm:rounded-2xl border-2 border-border bg-card animate-pulse" />
           ))}
         </div>
       </div>
@@ -70,10 +70,10 @@ export const CategoryStep = ({ formData, onNext }: CategoryStepProps) => {
   }
 
   return (
-    <div className="max-w-5xl">
-      <h1 className="text-3xl font-bold mb-2">Select Category</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+      <div className="max-w-5xl w-full">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Select Category</h1>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8">
         {categories.map((category) => {
           const Icon = category.icon ? iconMap[category.icon] || LayoutGrid : LayoutGrid;
           const isSelected = selectedCategory === category.id;
@@ -84,7 +84,7 @@ export const CategoryStep = ({ formData, onNext }: CategoryStepProps) => {
             <button
               key={category.id}
               onClick={() => handleCategorySelect(category.id)}
-              className={`flex flex-col items-center gap-4 p-8 rounded-2xl border-2 transition-all hover:scale-105 ${
+              className={`flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border-2 transition-all hover:scale-105 ${
                 isSelected 
                   ? "border-accent bg-accent/5" 
                   : "border-border bg-card hover:border-accent/50"
@@ -92,7 +92,7 @@ export const CategoryStep = ({ formData, onNext }: CategoryStepProps) => {
             >
               {category.image_path ? (
                 <div 
-                  className="w-20 h-20 rounded-full flex items-center justify-center transition-transform hover:scale-105"
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-transform hover:scale-105"
                   style={{ 
                     backgroundColor: 'rgba(156, 163, 175, 0.15)',
                     borderRadius: '16.78px'
@@ -101,26 +101,26 @@ export const CategoryStep = ({ formData, onNext }: CategoryStepProps) => {
                   <img 
                     src={category.image_path} 
                     alt={category.name}
-                    className="w-16 h-16 object-contain rounded-full"
+                    className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-full"
                   />
                 </div>
               ) : (
-                <div className={`w-20 h-20 rounded-full ${bgColor} flex items-center justify-center`}>
-                  <Icon className={`w-10 h-10 ${iconColor}`} />
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full ${bgColor} flex items-center justify-center`}>
+                  <Icon className={`w-8 h-8 sm:w-10 sm:h-10 ${iconColor}`} />
                 </div>
               )}
-              <span className="text-lg font-semibold text-center">{category.name}</span>
+              <span className="text-sm sm:text-base md:text-lg font-semibold text-center">{category.name}</span>
             </button>
           );
         })}
       </div>
 
       {categories.length > 0 && (
-        <div className="flex justify-end mt-8">
+        <div className="flex justify-end mt-6 sm:mt-8">
           <Button 
             onClick={handleContinue}
             disabled={!selectedCategory}
-            className="bg-accent hover:bg-accent/90 text-accent-foreground px-16"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground w-full sm:w-auto px-8 sm:px-16"
           >
             Continue
           </Button>

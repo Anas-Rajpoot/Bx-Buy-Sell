@@ -38,6 +38,15 @@ export class ListingService {
     return this.db.listing.findMany({
       where,
       include: {
+        user: {
+          select: {
+            id: true,
+            created_at: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+          },
+        },
         brand: true,
         category: true,
         tools: true,
@@ -60,6 +69,28 @@ export class ListingService {
   async findOne(id: string) {
     return this.db.listing.findUnique({
       where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            created_at: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+            profile_pic: true,
+          },
+        },
+        brand: true,
+        category: true,
+        tools: true,
+        financials: true,
+        statistics: true,
+        productQuestion: true,
+        managementQuestion: true,
+        social_account: true,
+        advertisement: true,
+        handover: true,
+      },
     });
   }
 

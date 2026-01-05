@@ -26,6 +26,7 @@ export const AddProductQuestionDialog = ({ open, onOpenChange }: AddProductQuest
   const [question, setQuestion] = useState("");
   const [hintText, setHintText] = useState("");
   const [questionType, setQuestionType] = useState("TEXT");
+  const [options, setOptions] = useState(""); // Options field for SELECT type
   const addQuestion = useAddProductQuestion();
 
   const handleSave = () => {
@@ -33,16 +34,24 @@ export const AddProductQuestionDialog = ({ open, onOpenChange }: AddProductQuest
       return;
     }
 
+    // Process options - split by comma if provided
+    let optionsArray: string[] = [];
+    if (questionType === "SELECT" && options.trim()) {
+      optionsArray = options.split(',').map(opt => opt.trim()).filter(opt => opt.length > 0);
+    }
+
     addQuestion.mutate(
       {
         question: question.trim(),
         answer_type: questionType,
+        options: optionsArray,
       },
       {
         onSuccess: () => {
           setQuestion("");
           setHintText("");
           setQuestionType("TEXT");
+          setOptions("");
           onOpenChange(false);
         },
       }
@@ -53,6 +62,7 @@ export const AddProductQuestionDialog = ({ open, onOpenChange }: AddProductQuest
     setQuestion("");
     setHintText("");
     setQuestionType("TEXT");
+    setOptions("");
     onOpenChange(false);
   };
 
@@ -96,6 +106,18 @@ export const AddProductQuestionDialog = ({ open, onOpenChange }: AddProductQuest
               </SelectContent>
             </Select>
           </div>
+          {questionType === "SELECT" && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-black">Dropdown Options (comma-separated)</Label>
+              <Input
+                value={options}
+                onChange={(e) => setOptions(e.target.value)}
+                placeholder="Option 1, Option 2, Option 3 (separate options with commas)"
+                className="bg-gray-50 border-gray-200 text-black"
+              />
+              <p className="text-xs text-gray-500">Enter options separated by commas (e.g., "Option 1, Option 2, Option 3")</p>
+            </div>
+          )}
         </div>
         <div className="flex justify-center gap-3 pt-4">
           <Button 

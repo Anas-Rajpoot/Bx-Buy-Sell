@@ -2,20 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ListingsSidebar } from "@/components/listings/ListingsSidebar";
 import { ListingCardDashboard } from "@/components/listings/ListingCardDashboard";
+import { DashboardHeader } from "@/components/listings/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
+import searchIcon from "@/assets/seach icon.svg";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api";
 import { toast } from "sonner";
-import { NotificationDropdown } from "@/components/NotificationDropdown";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Listing {
   id: string;
@@ -25,6 +19,7 @@ interface Listing {
   status: "draft" | "published" | "archived";
   managed_by_ex: boolean;
   category_id?: string;
+  category?: string;
   created_at: string;
   requests_count: number;
   unread_messages_count: number;
@@ -35,7 +30,6 @@ const MyListings = () => {
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [fullName, setFullName] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,24 +38,10 @@ const MyListings = () => {
         navigate("/login");
       } else {
         loadListings();
-        loadUserProfile();
       }
       setLoading(false);
     }
   }, [user, authLoading, navigate]);
-
-  const loadUserProfile = async () => {
-    if (!user) return;
-    
-    const response = await apiClient.getUserById(user.id);
-    if (response.success && response.data) {
-      const firstName = response.data.first_name || '';
-      const lastName = response.data.last_name || '';
-      setFullName(`${firstName} ${lastName}`.trim() || user.email);
-    } else {
-      setFullName(user.email);
-    }
-  };
 
   const loadListings = async () => {
     if (!user) return;
@@ -122,18 +102,57 @@ const MyListings = () => {
           let normalizedStatus = listing.status?.toLowerCase() || 'draft';
           if (normalizedStatus === 'publish') normalizedStatus = 'published';
           
-          // Get asking price from brand questions
+          // Get asking price from multiple sources
           let price = 0;
-          if (listing.brand && Array.isArray(listing.brand)) {
-            const priceQuestion = listing.brand.find((b: any) => 
-              b.question?.toLowerCase().includes('asking price') ||
-              b.question?.toLowerCase().includes('price')
+          
+          // First try direct price field
+          if (listing.price) {
+            const directPrice = typeof listing.price === 'string' 
+              ? parseFloat(listing.price.replace(/[^0-9.-]/g, '')) 
+              : parseFloat(listing.price);
+            if (!isNaN(directPrice) && directPrice > 0) {
+              price = directPrice;
+            }
+          }
+          
+          // Try from advertisement questions (listing price)
+          if (price === 0 && listing.advertisement && Array.isArray(listing.advertisement)) {
+            const adPriceQuestion = listing.advertisement.find((a: any) => 
+              a.question?.toLowerCase().includes('listing price') ||
+              a.question?.toLowerCase().includes('price')
             );
-            if (priceQuestion?.answer) {
-              const parsedPrice = parseFloat(priceQuestion.answer);
-              if (!isNaN(parsedPrice)) {
+            if (adPriceQuestion?.answer) {
+              const answer = adPriceQuestion.answer.toString().replace(/[^0-9.-]/g, '');
+              const parsedPrice = parseFloat(answer);
+              if (!isNaN(parsedPrice) && parsedPrice > 0) {
                 price = parsedPrice;
               }
+            }
+          }
+          
+          // Try from brand questions (asking price)
+          if (price === 0 && listing.brand && Array.isArray(listing.brand)) {
+            const priceQuestion = listing.brand.find((b: any) => 
+              b.question?.toLowerCase().includes('asking price') ||
+              b.question?.toLowerCase().includes('price') ||
+              b.question?.toLowerCase().includes('selling price')
+            );
+            if (priceQuestion?.answer) {
+              const answer = priceQuestion.answer.toString().replace(/[^0-9.-]/g, '');
+              const parsedPrice = parseFloat(answer);
+              if (!isNaN(parsedPrice) && parsedPrice > 0) {
+                price = parsedPrice;
+              }
+            }
+          }
+          
+          // Also check asking_price field
+          if (price === 0 && listing.asking_price) {
+            const askingPrice = typeof listing.asking_price === 'string'
+              ? parseFloat(listing.asking_price.replace(/[^0-9.-]/g, ''))
+              : parseFloat(listing.asking_price);
+            if (!isNaN(askingPrice) && askingPrice > 0) {
+              price = askingPrice;
             }
           }
           
@@ -157,6 +176,10 @@ const MyListings = () => {
             }
           }
           
+          // Get category name
+          const categoryInfo = listing.category?.[0] || listing.category || null;
+          const categoryName = categoryInfo?.name || '';
+
           return {
             id: listing.id,
             title: title,
@@ -165,6 +188,7 @@ const MyListings = () => {
             status: normalizedStatus,
             managed_by_ex: listing.managed_by_ex || false,
             category_id: listing.category?.[0]?.id || listing.category_id || '',
+            category: categoryName,
             created_at: listing.created_at || listing.createdAt || new Date().toISOString(),
             requests_count: listing.requests_count || 0,
             unread_messages_count: listing.unread_messages_count || 0,
@@ -180,14 +204,6 @@ const MyListings = () => {
       console.error("Error loading listings:", error);
       toast.error("Failed to load listings");
     }
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
   };
 
   const filteredListings = listings.filter((listing) =>
@@ -211,71 +227,46 @@ const MyListings = () => {
 
   return (
     <div className="flex min-h-screen bg-background">
+      {/* Desktop Sidebar */}
       <ListingsSidebar />
 
-      <div className="flex-1">
-        {/* Header */}
-        <header className="border-b border-border bg-background">
-          <div className="flex items-center justify-between px-8 py-4">
-            {/* Search */}
-            <div className="relative w-96">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-              <Input
-                type="text"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 rounded-lg"
-              />
-            </div>
+      <div className="flex-1 w-full flex flex-col min-w-0 lg:ml-[240px] xl:ml-[280px]">
+        {/* Header - Shared across all tabs */}
+        <DashboardHeader />
 
-            {/* Right Side */}
-            <div className="flex items-center gap-4">
-              <Button
-                className="bg-[#D3FC50] text-black hover:bg-[#D3FC50]/90 rounded-full font-semibold"
-                onClick={() => navigate("/dashboard")}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add New Listing
-              </Button>
-
-              <NotificationDropdown userId={user.id} variant="dark" />
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 hover:bg-muted px-3 py-2 rounded-lg transition-colors">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="" />
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        {getInitials(fullName || "User")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium">{fullName || "User"}</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => navigate("/profile")}>
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/settings")}>
-                    Settings
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+        {/* Search and Add Button Section - Only visible on My Listings tab */}
+        <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 px-4 sm:px-6 md:px-8 lg:px-10 pt-6 sm:pt-8 md:pt-10 pb-4 sm:pb-6 md:pb-8">
+          {/* Search Field */}
+          <div className="flex-1 sm:flex-none sm:w-full md:w-[300px] lg:w-[350px] xl:w-[389px] h-[50px] sm:h-[54px] md:h-[58px] px-4 sm:px-5 md:px-[20px] py-3 sm:py-4 md:py-[17px] rounded-full border border-[rgba(0,0,0,0.1)] bg-[rgba(250,250,250,1)] flex items-center gap-2 sm:gap-3">
+            <img src={searchIcon} alt="Search" className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 border-none outline-none bg-transparent font-['Lufga'] font-normal text-sm sm:text-base text-[rgba(0,0,0,0.5)] placeholder:text-[rgba(0,0,0,0.5)]"
+            />
           </div>
-        </header>
+
+          {/* Add New Listing Button */}
+          <Button
+            onClick={() => navigate("/dashboard")}
+            className="w-full sm:w-auto sm:flex-shrink-0 h-[50px] sm:h-[54px] px-4 sm:px-6 md:px-[26px] py-3 sm:py-4 md:py-4 rounded-full bg-[rgba(174,243,31,1)] hover:opacity-90 font-['Lufga'] font-medium text-sm sm:text-base text-black flex items-center justify-center gap-2 sm:gap-3"
+          >
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="whitespace-nowrap">Add New Listing</span>
+          </Button>
+        </div>
 
         {/* Main Content */}
-        <main className="p-8">
+        <main className="flex-1 px-4 sm:px-6 md:px-8 lg:px-10 pb-6 sm:pb-8 md:pb-10">
           {filteredListings.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="max-w-md mx-auto">
-                <h2 className="text-2xl font-semibold mb-4">
+            <div className="text-center py-12 sm:py-16 md:py-20">
+              <div className="max-w-md mx-auto px-4">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
                   {searchQuery ? "No listings found" : "No listings yet"}
                 </h2>
-                <p className="text-muted-foreground mb-8">
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8">
                   {searchQuery
                     ? "Try adjusting your search"
                     : "Create your first listing to showcase your business to potential buyers"}
@@ -284,7 +275,7 @@ const MyListings = () => {
                   <Button
                     onClick={() => navigate("/dashboard")}
                     size="lg"
-                    className="bg-[#D3FC50] text-black hover:bg-[#D3FC50]/90 rounded-full"
+                    className="bg-[#D3FC50] text-black hover:bg-[#D3FC50]/90 rounded-full text-sm sm:text-base"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Create Your First Listing
@@ -293,7 +284,7 @@ const MyListings = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 justify-items-center">
               {filteredListings.map((listing) => (
                 <ListingCardDashboard
                   key={listing.id}

@@ -11,11 +11,18 @@ export const useAddProductQuestion = () => {
       answer_type: string;
       options?: string[];
     }) => {
+      // Map frontend answer types to backend enum values
+      const answerTypeMap: Record<string, string> = {
+        'YESNO': 'BOOLEAN',
+        'TEXTAREA': 'TEXT', // Backend doesn't have TEXTAREA, use TEXT
+      };
+      const mappedAnswerType = answerTypeMap[data.answer_type] || data.answer_type;
+
       const response = await apiClient.createAdminQuestion({
         question: data.question,
-        answer_type: data.answer_type,
+        answer_type: mappedAnswerType,
         answer_for: "PRODUCT",
-        options: data.options || [],
+        option: data.options || [],
       });
 
       if (!response.success) {

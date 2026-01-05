@@ -10,5 +10,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   imports: [RedisAdapterModule, MessageQueueModule, PrismaModule],
   providers: [ChatGateway, ChatService],
   controllers: [ChatController],
+  exports: [ChatService],
 })
 export class ChatModule {}

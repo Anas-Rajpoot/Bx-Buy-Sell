@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Bell, Check, Trash2, ExternalLink } from "lucide-react";
+import notifyIcon from "@/assets/notify.svg";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,77 +13,140 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-// TODO: Implement notification backend endpoints
-// For now, notifications are disabled
+import { apiClient } from "@/lib/api";
+import { createSocketConnection } from "@/lib/socket";
 
 interface Notification {
   id: string;
   title: string;
   message: string;
-  type: "info" | "success" | "warning" | "error";
+  type: "info" | "success" | "warning" | "error" | "message";
   read: boolean;
   link: string | null;
-  created_at: string;
+  createdAt?: string;
+  created_at?: string;
 }
 
 interface NotificationDropdownProps {
   userId?: string;
   variant?: "light" | "dark";
+  customStyle?: boolean; // For custom circular background styling
 }
 
-export const NotificationDropdown = ({ userId, variant = "dark" }: NotificationDropdownProps) => {
+export const NotificationDropdown = ({ userId, variant = "dark", customStyle = false }: NotificationDropdownProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isListingDetailPage = location.pathname.startsWith('/listing/');
 
   useEffect(() => {
-    // TODO: Implement notification backend endpoints
-    // For now, notifications are disabled
-    // if (userId) {
-    //   loadNotifications();
-    // }
+    if (userId) {
+      loadNotifications();
+      
+      // Set up socket to listen for new notifications
+      const socket = createSocketConnection({
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+      });
+      
+      socket.on('connect', () => {
+        console.log('✅ NotificationDropdown: Socket connected');
+      });
+      
+      // Listen for new notification events
+      socket.on('new_notification', () => {
+        console.log('🔔 New notification received, refreshing...');
+        loadNotifications(); // Refresh notifications when new one arrives
+      });
+      
+      // Poll for notifications every 30 seconds as fallback
+      const interval = setInterval(() => {
+        loadNotifications();
+      }, 30000);
+      
+      return () => {
+        socket.disconnect();
+        clearInterval(interval);
+      };
+    }
   }, [userId]);
 
   const loadNotifications = async () => {
-    // TODO: Implement notification backend endpoints
-    // const response = await apiClient.getNotifications(userId);
-    // if (response.success && response.data) {
-    //   setNotifications(response.data);
-    //   setUnreadCount(response.data.filter((n) => !n.read).length || 0);
-    // }
+    try {
+      const response = await apiClient.getNotifications();
+      if (response.success && response.data) {
+        const notifs = Array.isArray(response.data) ? response.data : [];
+        setNotifications(notifs);
+        setUnreadCount(notifs.filter((n) => !n.read).length || 0);
+      } else {
+        // If response structure is different, try to extract data
+        const data = (response as any).data;
+        if (Array.isArray(data)) {
+          setNotifications(data);
+          setUnreadCount(data.filter((n: any) => !n.read).length || 0);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
   };
 
   const markAsRead = async (notificationId: string) => {
-    // TODO: Implement notification backend endpoints
-    // const response = await apiClient.markNotificationAsRead(notificationId);
-    // if (response.success) {
-    //   loadNotifications();
-    // } else {
-    //   toast.error("Failed to mark notification as read");
-    // }
+    try {
+      const response = await apiClient.markNotificationAsRead(notificationId);
+      if (response.success) {
+        // Update local state immediately
+        setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
+        setUnreadCount(prev => Math.max(0, prev - 1));
+        loadNotifications(); // Refresh to ensure consistency
+      } else {
+        toast.error("Failed to mark notification as read");
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+      toast.error("Failed to mark notification as read");
+    }
   };
 
   const deleteNotification = async (notificationId: string) => {
-    // TODO: Implement notification backend endpoints
-    // const response = await apiClient.deleteNotification(notificationId);
-    // if (response.success) {
-    //   loadNotifications();
-    // } else {
-    //   toast.error("Failed to delete notification");
-    // }
+    try {
+      const response = await apiClient.deleteNotification(notificationId);
+      if (response.success) {
+        // Update local state immediately
+        const deletedNotif = notifications.find(n => n.id === notificationId);
+        if (deletedNotif && !deletedNotif.read) {
+          setUnreadCount(prev => Math.max(0, prev - 1));
+        }
+        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+        loadNotifications(); // Refresh to ensure consistency
+      } else {
+        toast.error("Failed to delete notification");
+      }
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      toast.error("Failed to delete notification");
+    }
   };
 
   const markAllAsRead = async () => {
-    // TODO: Implement notification backend endpoints
-    // if (!userId) return;
-    // const response = await apiClient.markAllNotificationsAsRead(userId);
-    // if (response.success) {
-    //   loadNotifications();
-    // } else {
-    //   toast.error("Failed to mark all as read");
-    // }
+    if (!userId) return;
+    try {
+      const response = await apiClient.markAllNotificationsAsRead();
+      if (response.success) {
+        // Update local state immediately
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        setUnreadCount(0);
+        loadNotifications(); // Refresh to ensure consistency
+      } else {
+        toast.error("Failed to mark all as read");
+      }
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+      toast.error("Failed to mark all as read");
+    }
   };
 
   const handleNotificationClick = (notification: Notification) => {
@@ -114,29 +178,60 @@ export const NotificationDropdown = ({ userId, variant = "dark" }: NotificationD
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "relative p-2 rounded-lg transition-colors",
-            variant === "light" 
-              ? "text-primary-foreground hover:text-accent" 
-              : "hover:bg-muted"
+            "relative rounded-full flex items-center justify-center transition-colors",
+            customStyle ? "" : (
+              variant === "light" && !isListingDetailPage
+                ? "w-8 h-8 sm:w-10 sm:h-10 bg-[#FFFFFF0D] text-white hover:bg-[#D3FC50] hover:text-black" 
+                : variant === "dark" || isListingDetailPage
+                ? "text-black hover:bg-muted"
+                : "w-8 h-8 sm:w-10 sm:h-10 bg-[#FFFFFF0D] text-white hover:bg-[#D3FC50] hover:text-black"
+            )
           )}
+          style={customStyle ? {
+            width: '44px',
+            height: '44px',
+            borderRadius: '22px',
+            padding: '10px',
+            backgroundColor: 'rgba(250, 250, 250, 1)',
+          } : (isListingDetailPage ? {
+            width: '52px',
+            height: '52px',
+            borderRadius: '28px',
+            paddingTop: '15px',
+            paddingRight: '16px',
+            paddingBottom: '15px',
+            paddingLeft: '16px',
+            background: 'rgba(0, 0, 0, 0.1)'
+          } : {})}
         >
-          <Bell className="w-5 h-5" />
+          {customStyle ? (
+            <img src={notifyIcon} alt="Notifications" style={{ width: '24px', height: '24px' }} />
+          ) : (
+            <Bell 
+              className="w-5 h-5 sm:w-6 sm:h-6" 
+              style={isListingDetailPage ? { color: 'rgba(0, 0, 0, 1)' } : {}}
+            />
+          )}
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-destructive-foreground text-xs">
+            <Badge className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs rounded-full">
               {unreadCount > 9 ? "9+" : unreadCount}
             </Badge>
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
-        <div className="flex items-center justify-between px-2 py-2">
-          <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
+      <DropdownMenuContent 
+        align="end" 
+        sideOffset={8}
+        className="w-80 sm:w-96"
+      >
+        <div className="flex items-center justify-between px-4 py-3 border-b">
+          <DropdownMenuLabel className="p-0 font-semibold text-base">Notifications</DropdownMenuLabel>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
               size="sm"
               onClick={markAllAsRead}
-              className="h-auto p-1 text-xs"
+              className="h-auto p-1 text-xs text-blue-600 hover:text-blue-700"
             >
               Mark all as read
             </Button>
@@ -153,57 +248,59 @@ export const NotificationDropdown = ({ userId, variant = "dark" }: NotificationD
               <div
                 key={notification.id}
                 className={cn(
-                  "p-3 border-b last:border-b-0 hover:bg-muted/50 transition-colors",
-                  !notification.read && "bg-muted/30"
+                  "p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors",
+                  !notification.read && "bg-blue-50/50"
                 )}
               >
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1.5">
                       <h4 className={cn("font-semibold text-sm", getNotificationColor(notification.type))}>
                         {notification.title}
                       </h4>
                       {!notification.read && (
-                        <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                        <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">
+                    <p className="text-sm text-gray-700 mb-2.5">
                       {notification.message}
                     </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(notification.created_at).toLocaleDateString()}
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-gray-500">
+                        {new Date(notification.created_at || notification.createdAt).toLocaleDateString()}
                       </span>
                       {notification.link && (
                         <Button
                           variant="link"
                           size="sm"
                           onClick={() => handleNotificationClick(notification)}
-                          className="h-auto p-0 text-xs"
+                          className="h-auto p-0 text-xs text-blue-600 hover:text-blue-700"
                         >
                           View <ExternalLink className="w-3 h-3 ml-1" />
                         </Button>
                       )}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1.5">
                     {!notification.read && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6"
+                        className="h-7 w-7 hover:bg-gray-200"
                         onClick={() => markAsRead(notification.id)}
+                        title="Mark as read"
                       >
-                        <Check className="w-3 h-3" />
+                        <Check className="w-4 h-4 text-gray-600" />
                       </Button>
                     )}
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 text-destructive hover:text-destructive"
+                      className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50"
                       onClick={() => deleteNotification(notification.id)}
+                      title="Delete"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>

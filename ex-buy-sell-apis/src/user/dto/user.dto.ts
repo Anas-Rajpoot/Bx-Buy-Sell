@@ -19,6 +19,7 @@ export const UserSchema = z.object({
   city: z.string().optional().nullable(),
   zip_code: z.string().optional(),
   background: z.string().optional(),
+  profile_pic: z.string().optional().nullable(),
   is_online: z.boolean().default(false),
   password_hash: z.string(),
 

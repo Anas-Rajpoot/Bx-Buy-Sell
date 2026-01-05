@@ -19,15 +19,15 @@ const AdminChatAnalytics = () => {
     <div className="flex min-h-screen bg-background">
       <AdminSidebar />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden w-full min-w-0">
         <AdminHeader />
 
         <div className="flex-1 overflow-auto">
           <Tabs defaultValue="analytics" className="w-full">
-            <div className="border-b border-white/10 px-6 pt-4 pb-2">
-              <TabsList variant="admin">
-                <TabsTrigger variant="admin" value="analytics">Analytics</TabsTrigger>
-                <TabsTrigger variant="admin" value="routing">Routing Rules</TabsTrigger>
+            <div className="border-b border-white/10 px-4 sm:px-6 pt-3 sm:pt-4 pb-2">
+              <TabsList variant="admin" className="text-xs sm:text-sm">
+                <TabsTrigger variant="admin" value="analytics" className="text-xs sm:text-sm">Analytics</TabsTrigger>
+                <TabsTrigger variant="admin" value="routing" className="text-xs sm:text-sm">Routing Rules</TabsTrigger>
               </TabsList>
             </div>
 
@@ -35,25 +35,25 @@ const AdminChatAnalytics = () => {
               <ChatAnalyticsDashboard />
             </TabsContent>
 
-            <TabsContent value="routing" className="m-0 p-6 animate-fade-in">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">Auto-Assignment Rules</h2>
+            <TabsContent value="routing" className="m-0 p-4 sm:p-6 animate-fade-in">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <h2 className="text-lg sm:text-xl font-semibold">Auto-Assignment Rules</h2>
                   <RoutingRulesDialog />
                 </div>
 
-                <div className="grid gap-4">
+                <div className="grid gap-3 sm:gap-4">
                   {routingRules && routingRules.length > 0 ? (
                     routingRules.map((rule) => (
                       <Card key={rule.id}>
                         <CardHeader>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <CardTitle className="text-lg">{rule.name}</CardTitle>
-                              <Badge variant={rule.is_active ? "default" : "secondary"}>
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                              <CardTitle className="text-base sm:text-lg">{rule.name}</CardTitle>
+                              <Badge variant={rule.is_active ? "default" : "secondary"} className="text-xs">
                                 {rule.is_active ? "Active" : "Inactive"}
                               </Badge>
-                              <Badge variant="outline">Priority: {rule.priority}</Badge>
+                              <Badge variant="outline" className="text-xs">Priority: {rule.priority}</Badge>
                             </div>
                             <div className="flex items-center gap-2">
                               <Switch
@@ -66,14 +66,15 @@ const AdminChatAnalytics = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => deleteRule.mutate(rule.id)}
+                                className="h-8 w-8 sm:h-10 sm:w-10"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </div>
                           </div>
                         </CardHeader>
                         <CardContent>
-                          <div className="text-sm text-muted-foreground space-y-1">
+                          <div className="text-xs sm:text-sm text-muted-foreground space-y-1">
                             {rule.category_id && <p>Category: Specified</p>}
                             {rule.assign_to_role && <p>Assign to: {rule.assign_to_role}</p>}
                             {rule.assign_to_user_id && <p>Assign to: Specific user</p>}
@@ -86,7 +87,7 @@ const AdminChatAnalytics = () => {
                     ))
                   ) : (
                     <Card>
-                      <CardContent className="py-8 text-center text-muted-foreground">
+                      <CardContent className="py-6 sm:py-8 text-center text-muted-foreground text-sm">
                         No routing rules configured. Create one to enable auto-assignment.
                       </CardContent>
                     </Card>

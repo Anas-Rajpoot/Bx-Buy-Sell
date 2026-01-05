@@ -74,17 +74,17 @@ export const DashboardHeader = ({ user }: DashboardHeaderProps) => {
   };
 
   return (
-    <header className="h-16 border-b border-border bg-background flex items-center justify-between px-8">
-      <div className="flex items-center gap-4">
+    <header className="h-14 sm:h-16 border-b border-border bg-background flex items-center justify-between px-4 sm:px-6 md:px-8 sticky top-0 z-40">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Link to="/" className="flex items-center">
           <img 
             src={logo} 
             alt="EX Logo" 
-            className="h-10 w-10 object-contain"
+            className="h-8 w-8 sm:h-10 sm:w-10 object-contain"
           />
         </Link>
       </div>
-      <div className="flex items-center gap-4 flex-1 max-w-md">
+      <div className="hidden sm:flex items-center gap-4 flex-1 max-w-md mx-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -95,19 +95,19 @@ export const DashboardHeader = ({ user }: DashboardHeaderProps) => {
         </div>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <NotificationDropdown userId={user.id} variant="dark" />
         
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-3 cursor-pointer hover:bg-muted px-3 py-2 rounded-lg transition-colors focus:outline-none">
-            <Avatar className="w-8 h-8">
+          <DropdownMenuTrigger className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-muted px-2 sm:px-3 py-2 rounded-lg transition-colors focus:outline-none">
+            <Avatar className="w-7 h-7 sm:w-8 sm:h-8">
               <AvatarImage src="" alt={userName} />
               <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                 {getInitials(userName)}
               </AvatarFallback>
             </Avatar>
-            <span className="text-sm font-medium">{userName}</span>
-            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            <span className="hidden sm:inline text-sm font-medium">{userName}</span>
+            <ChevronDown className="hidden sm:block w-4 h-4 text-muted-foreground" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>

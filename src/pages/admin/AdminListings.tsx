@@ -360,29 +360,29 @@ export default function AdminListings() {
     <div className="flex min-h-screen w-full bg-background">
       <AdminSidebar />
       
-      <main className="flex-1">
+      <main className="flex-1 w-full min-w-0 overflow-x-hidden">
         <AdminHeader />
 
-        <div className="p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {/* Search and Filters */}
-          <div className="mb-6 space-y-4">
-            <div className="flex gap-4">
+          <div className="mb-4 sm:mb-6 space-y-3 sm:space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search by username, title, link, ..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-background border-border"
+                  className="pl-8 sm:pl-10 text-sm sm:text-base bg-background border-border h-9 sm:h-10"
                 />
               </div>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="gap-2 border-border">
-                    <Filter className="h-4 w-4" />
+                  <Button variant="outline" className="gap-2 border-border text-sm sm:text-base h-9 sm:h-10">
+                    <Filter className="h-3 w-3 sm:h-4 sm:w-4" />
                     Filters
                     {(statusFilter !== "all" || categoryFilter !== "all" || dateFrom || dateTo) && (
-                      <Badge className="ml-2 bg-accent text-black">
+                      <Badge className="ml-2 bg-accent text-black text-xs">
                         {[statusFilter !== "all", categoryFilter !== "all", dateFrom, dateTo].filter(Boolean).length}
                       </Badge>
                     )}
@@ -523,14 +523,14 @@ export default function AdminListings() {
 
             {/* Bulk Actions */}
             {selectedItems.size > 0 && (
-              <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
-                <span className="text-sm font-medium">{selectedItems.size} selected</span>
-                <div className="flex gap-2 ml-auto">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2 p-3 bg-muted/50 rounded-lg">
+                <span className="text-xs sm:text-sm font-medium">{selectedItems.size} selected</span>
+                <div className="flex flex-wrap gap-2 sm:ml-auto">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => handleBulkAction("publish")}
-                    className="border-border"
+                    className="border-border text-xs sm:text-sm h-8 sm:h-9"
                   >
                     Publish
                   </Button>
@@ -538,7 +538,7 @@ export default function AdminListings() {
                     size="sm"
                     variant="outline"
                     onClick={() => handleBulkAction("draft")}
-                    className="border-border"
+                    className="border-border text-xs sm:text-sm h-8 sm:h-9"
                   >
                     Set to Draft
                   </Button>
@@ -546,7 +546,7 @@ export default function AdminListings() {
                     size="sm"
                     variant="outline"
                     onClick={() => handleBulkAction("delete")}
-                    className="border-border text-destructive hover:text-destructive"
+                    className="border-border text-destructive hover:text-destructive text-xs sm:text-sm h-8 sm:h-9"
                   >
                     Delete
                   </Button>
@@ -566,20 +566,20 @@ export default function AdminListings() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-gray-200 bg-gray-50/50">
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                           User Name
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                           Title
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap hidden md:table-cell">
                           Link
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                           Status
                         </th>
                         <th 
-                          className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:text-gray-900"
+                          className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:text-gray-900 whitespace-nowrap hidden lg:table-cell"
                           onClick={() => handleSort("created_at")}
                         >
                           <div className="flex items-center gap-1">
@@ -587,13 +587,13 @@ export default function AdminListings() {
                             <ChevronDown className="h-3 w-3" />
                           </div>
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap hidden md:table-cell">
                           Managed
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap hidden lg:table-cell">
                           Responsible
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                           View
                         </th>
                       </tr>
@@ -605,22 +605,22 @@ export default function AdminListings() {
                           className="hover:bg-gray-50/50 transition-colors"
                         >
                           {/* User Name Column with Title underneath */}
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-10 w-10 ring-2 ring-gray-100">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4">
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 ring-2 ring-gray-100">
                                 <AvatarImage src={listing.profile?.avatar_url || undefined} />
-                                <AvatarFallback className="bg-gray-100 text-gray-600 font-medium">
+                                <AvatarFallback className="bg-gray-100 text-gray-600 font-medium text-xs">
                                   {listing.profile?.full_name?.charAt(0) || 'U'}
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex flex-col gap-0.5">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm font-semibold text-gray-900">
+                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                  <span className="text-xs sm:text-sm font-semibold text-gray-900">
                                     {listing.profile?.full_name || 'Unknown User'}
                                   </span>
                                   {/* Pro tag - you can add logic to determine if user is Pro */}
                                   {listing.profile?.user_type === 'seller' && (
-                                    <Badge className="bg-accent text-black text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                                    <Badge className="bg-accent text-black text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5 rounded-full font-bold">
                                       Pro
                                     </Badge>
                                   )}
@@ -630,76 +630,76 @@ export default function AdminListings() {
                           </td>
                           
                           {/* Title Column */}
-                          <td className="px-6 py-4">
-                            <span className="text-sm text-gray-700 font-medium">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4">
+                            <span className="text-xs sm:text-sm text-gray-700 font-medium">
                               {listing.title}
                             </span>
                           </td>
                           
                           {/* Link Column */}
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden md:table-cell">
                             {listing.portfolioLink ? (
                               <a 
                                 href={listing.portfolioLink.startsWith('http') ? listing.portfolioLink : `https://${listing.portfolioLink}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-accent transition-colors"
+                                className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 hover:text-accent transition-colors"
                               >
-                                <ExternalLink className="h-3.5 w-3.5" />
+                                <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                                 <span className="max-w-[200px] truncate">{listing.portfolioLink}</span>
                               </a>
                             ) : (
-                              <span className="text-sm text-gray-400">-</span>
+                              <span className="text-xs sm:text-sm text-gray-400">-</span>
                             )}
                           </td>
                           
                           {/* Status Column */}
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                             {(listing.status === 'draft' || listing.status === 'DRAFT') && (
-                              <Badge className="bg-yellow-100 text-yellow-800 border-0 rounded-full px-3 py-0.5 text-xs font-medium">
+                              <Badge className="bg-yellow-100 text-yellow-800 border-0 rounded-full px-2 sm:px-3 py-0.5 text-[10px] sm:text-xs font-medium">
                                 Pending
                               </Badge>
                             )}
                             {(listing.status === 'published' || listing.status === 'PUBLISH' || listing.status === 'publish') && (
-                              <Badge className="bg-green-100 text-green-800 border-0 rounded-full px-3 py-0.5 text-xs font-medium">
+                              <Badge className="bg-green-100 text-green-800 border-0 rounded-full px-2 sm:px-3 py-0.5 text-[10px] sm:text-xs font-medium">
                                 Published
                               </Badge>
                             )}
                             {(listing.status === 'deleted' || listing.status === 'DELETED') && (
-                              <Badge className="bg-red-100 text-red-800 border-0 rounded-full px-3 py-0.5 text-xs font-medium">
+                              <Badge className="bg-red-100 text-red-800 border-0 rounded-full px-2 sm:px-3 py-0.5 text-[10px] sm:text-xs font-medium">
                                 Delisted
                               </Badge>
                             )}
                           </td>
                           
                           {/* Created Column */}
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-sm text-gray-600">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
+                            <span className="text-xs sm:text-sm text-gray-600">
                               {new Date(listing.created_at).toISOString().split('T')[0]}
                             </span>
                           </td>
                           
                           {/* Managed Column - Clickable to toggle */}
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden md:table-cell">
                             {(() => {
                               const isManaged = listing.managed_by_ex === true || listing.managed_by_ex === 1 || listing.managed_by_ex === 'true' || listing.managed_by_ex === '1';
                               if (listing.id === 'debug') console.log('Listing managed_by_ex value:', listing.managed_by_ex, 'isManaged:', isManaged);
                               return isManaged;
                             })() ? (
                               <button
-                                className="bg-[#c6fe1f] text-black border-2 border-[#a3e635] rounded-full px-4 py-2 text-xs font-bold cursor-pointer hover:bg-[#b5e91c] hover:border-[#84cc16] transition-all shadow-md flex items-center gap-2 min-w-[170px] justify-center group"
+                                className="bg-[#c6fe1f] text-black border-2 border-[#a3e635] rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-bold cursor-pointer hover:bg-[#b5e91c] hover:border-[#84cc16] transition-all shadow-md flex items-center gap-1.5 sm:gap-2 min-w-[140px] sm:min-w-[170px] justify-center group"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleToggleManagedByEx(listing.id, true);
                                 }}
                                 title="✓ Currently Managed by EX - Click to change to 'by owner'"
                               >
-                                <ExLogo size={16} className="group-hover:scale-110 transition-transform" />
+                                <ExLogo size={14} className="group-hover:scale-110 transition-transform sm:w-4 sm:h-4" />
                                 <span className="font-bold">Managed by EX</span>
                               </button>
                             ) : (
                               <button
-                                className="bg-gray-100 text-gray-700 border border-gray-300 rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer hover:bg-gray-200 hover:border-gray-400 transition-all flex items-center gap-2 min-w-[100px] justify-center group"
+                                className="bg-gray-100 text-gray-700 border border-gray-300 rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium cursor-pointer hover:bg-gray-200 hover:border-gray-400 transition-all flex items-center gap-1.5 sm:gap-2 min-w-[80px] sm:min-w-[100px] justify-center group"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleToggleManagedByEx(listing.id, false);
@@ -712,7 +712,7 @@ export default function AdminListings() {
                           </td>
                           
                           {/* Responsible Column */}
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
                             {listing.responsible_user_id ? (
                               <div 
                                 className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
@@ -752,38 +752,38 @@ export default function AdminListings() {
                           </td>
                           
                           {/* View Column - Actions Menu */}
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button 
                                   variant="ghost" 
                                   size="icon"
-                                  className="h-8 w-8 hover:bg-gray-100"
+                                  className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-gray-100"
                                 >
-                                  <MoreVertical className="h-4 w-4 text-gray-600" />
+                                  <MoreVertical className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg rounded-lg min-w-[160px] p-1">
+                              <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg rounded-lg min-w-[140px] sm:min-w-[160px] p-1 text-xs sm:text-sm">
                                 <DropdownMenuItem 
                                   className="cursor-pointer hover:bg-accent/20 rounded-md"
                                   onClick={() => navigate(`/admin/listings/${listing.id}`)}
                                 >
-                                  <Eye className="h-4 w-4 mr-2 text-gray-600" />
-                                  <span className="text-sm">View</span>
+                                  <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-gray-600" />
+                                  <span>View</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   className="cursor-pointer hover:bg-accent/20 rounded-md"
                                   onClick={() => handleQuickEdit(listing.id)}
                                 >
-                                  <Edit className="h-4 w-4 mr-2 text-gray-600" />
-                                  <span className="text-sm">Edit</span>
+                                  <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-gray-600" />
+                                  <span>Edit</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   className="cursor-pointer hover:bg-accent/20 rounded-md"
                                   onClick={() => navigate(`/admin/users/${listing.userId || listing.user_id}/chats`)}
                                 >
-                                  <MessageCircle className="h-4 w-4 mr-2 text-gray-600" />
-                                  <span className="text-sm">Chat</span>
+                                  <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-gray-600" />
+                                  <span>Chat</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   className="cursor-pointer hover:bg-accent/20 rounded-md"
@@ -792,15 +792,15 @@ export default function AdminListings() {
                                     toast.info("Block/Disable functionality coming soon");
                                   }}
                                 >
-                                  <XCircle className="h-4 w-4 mr-2 text-gray-600" />
-                                  <span className="text-sm">Block</span>
+                                  <XCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-gray-600" />
+                                  <span>Block</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   className="cursor-pointer text-red-600 hover:bg-red-50 rounded-md"
                                   onClick={() => handleDelete(listing.id)}
                                 >
-                                  <Trash2 className="h-4 w-4 mr-2" />
-                                  <span className="text-sm">Delete</span>
+                                  <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                                  <span>Delete</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -823,18 +823,19 @@ export default function AdminListings() {
                 />
               )}
 
-              <div className="flex items-center justify-between mt-6">
-                <div className="text-sm text-muted-foreground">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 mt-4 sm:mt-6">
+                <div className="text-xs sm:text-sm text-muted-foreground">
                   Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, sortedListings.length)} of {sortedListings.length}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
+                    className="h-8 w-8 sm:h-10 sm:w-10"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                   {Array.from({ length: Math.min(3, totalPages) }, (_, i) => i + 1).map((page) => (
                     <Button
@@ -842,7 +843,7 @@ export default function AdminListings() {
                       variant={currentPage === page ? "default" : "ghost"}
                       size="icon"
                       onClick={() => setCurrentPage(page)}
-                      className={currentPage === page ? "bg-accent text-black hover:bg-accent/90" : ""}
+                      className={`h-8 w-8 sm:h-10 sm:w-10 text-xs sm:text-sm ${currentPage === page ? "bg-accent text-black hover:bg-accent/90" : ""}`}
                     >
                       {page}
                     </Button>
@@ -852,8 +853,9 @@ export default function AdminListings() {
                     size="icon"
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
+                    className="h-8 w-8 sm:h-10 sm:w-10"
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
               </div>

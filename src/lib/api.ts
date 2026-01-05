@@ -474,8 +474,9 @@ class ApiClient {
     return this.request(`/listing${query ? `?${query}` : ''}`);
   }
 
-  async getListingById(id: string) {
-    return this.request(`/listing/${id}`);
+  async getListingById(id: string, nocache?: boolean) {
+    const url = nocache ? `/listing/${id}?nocache=true` : `/listing/${id}`;
+    return this.request(url);
   }
 
   async updateListing(id: string, listingData: any) {
@@ -633,8 +634,8 @@ class ApiClient {
     }
     if (questionData.answer_for !== undefined) payload.answer_for = questionData.answer_for;
     
-    // Only include options if it's provided and not empty
-    if (questionData.option && questionData.option.length > 0) {
+    // Include options if it's provided (even if empty array to clear options)
+    if (questionData.option !== undefined) {
       payload.options = questionData.option; // Send as 'options' to match DTO
     }
     
@@ -979,11 +980,8 @@ class ApiClient {
     });
   }
 
-  async getAgoraToken(channelName: string, uid: string) {
-    return this.request(`/chat/agora/token?channelName=${encodeURIComponent(channelName)}&uid=${encodeURIComponent(uid)}`, {
-      method: 'GET',
-    });
-  }
+  // Removed: getAgoraToken - No longer using Agora, using WebRTC with WebSocket instead
+  // This function is kept for backward compatibility but should not be used
 
   async deleteChat(chatId: string, userId: string) {
     return this.request(`/chat/delete/${chatId}/${userId}`, {
@@ -994,6 +992,54 @@ class ApiClient {
   async archiveChat(chatId: string, userId: string) {
     return this.request(`/chat/archive/${chatId}/${userId}`, {
       method: 'PUT',
+    });
+  }
+
+  // Notification methods
+  async getNotifications() {
+    return this.request('/notification', {
+      method: 'GET',
+    });
+  }
+
+  async getUnreadNotificationCount() {
+    return this.request('/notification/unread-count', {
+      method: 'GET',
+    });
+  }
+
+  async markNotificationAsRead(notificationId: string) {
+    return this.request(`/notification/${notificationId}/read`, {
+      method: 'PUT',
+    });
+  }
+
+  async markAllNotificationsAsRead() {
+    return this.request('/notification/mark-all-read', {
+      method: 'PUT',
+    });
+  }
+
+  async deleteNotification(notificationId: string) {
+    return this.request(`/notification/${notificationId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Message edit/delete methods
+  async editMessage(messageId: string, content: string) {
+    return this.request(`/chat/message/${messageId}/edit`, {
+      method: 'PUT',
+      body: JSON.stringify({ content }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
+  async deleteMessage(messageId: string) {
+    return this.request(`/chat/message/${messageId}/delete`, {
+      method: 'DELETE',
     });
   }
 
@@ -1015,19 +1061,49 @@ class ApiClient {
     });
   }
 
+  // Admin chat endpoints
+  async getAllChats() {
+    return this.request('/chat/all');
+  }
+
+  // Monitor/Admin chat endpoint (dedicated for monitor dashboard)
+  async getAllChatsForMonitor() {
+    return this.request('/chat/monitor/all');
+  }
+
   async getChatById(chatId: string) {
     return this.request(`/chat/${chatId}`, {
       method: 'GET',
     });
   }
 
-  // Admin chat endpoints
-  async getAllChats() {
-    return this.request('/chat/all');
+  // Chat assignment endpoints
+  async assignMonitorToChat(chatId: string, monitorId: string) {
+    return this.request(`/chat/assign/${chatId}/${monitorId}`, {
+      method: 'POST',
+    });
   }
 
-  async getChatById(chatId: string) {
-    return this.request(`/chat/${chatId}`);
+  async unassignMonitorFromChat(chatId: string, monitorId?: string) {
+    const url = monitorId 
+      ? `/chat/unassign/${chatId}?monitorId=${monitorId}`
+      : `/chat/unassign/${chatId}`;
+    return this.request(url, {
+      method: 'DELETE',
+    });
+  }
+
+  async getAssignedMonitor(chatId: string) {
+    return this.request(`/chat/assigned/${chatId}`, {
+      method: 'GET',
+    });
+  }
+
+  // Health check endpoint
+  async checkHealth() {
+    return this.request('/health', {
+      method: 'GET',
+    });
   }
 }
 

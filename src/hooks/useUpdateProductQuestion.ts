@@ -10,12 +10,27 @@ export const useUpdateProductQuestion = () => {
       id: string; 
       question: string; 
       answer_type: string;
+      options?: string[];
     }) => {
-      const response = await apiClient.updateAdminQuestion(data.id, {
+      // Map frontend answer types to backend enum values
+      const answerTypeMap: Record<string, string> = {
+        'YESNO': 'BOOLEAN',
+        'TEXTAREA': 'TEXT', // Backend doesn't have TEXTAREA, use TEXT
+      };
+      const mappedAnswerType = answerTypeMap[data.answer_type] || data.answer_type;
+
+      const payload: any = {
         question: data.question,
-        answer_type: data.answer_type,
+        answer_type: mappedAnswerType,
         answer_for: "PRODUCT",
-      });
+      };
+      
+      // Add options if provided (even if empty array to clear options)
+      if (data.options !== undefined) {
+        payload.option = data.options;
+      }
+
+      const response = await apiClient.updateAdminQuestion(data.id, payload);
 
       if (!response.success) {
         throw new Error(response.error || "Failed to update question");

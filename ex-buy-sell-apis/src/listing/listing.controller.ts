@@ -80,17 +80,39 @@ export class ListingController {
     description: 'Listing Id',
     required: true,
   })
-  async findOne(@Param('id') id: string) {
-    const value = await this.cacheManager.get(`${this.constructor.name}:${id}`);
-    if (value) {
-      return value;
+  async findOne(@Param('id') id: string, @Query('nocache') nocache?: string) {
+    // Check cache only if nocache is not set
+    if (nocache !== 'true') {
+      const value = await this.cacheManager.get(`${this.constructor.name}:${id}`);
+      if (value) {
+        console.log(`📦 Returning cached listing for ID: ${id}`);
+        return value;
+      }
+    } else {
+      // Clear cache if nocache is true
+      await this.cacheManager.del(`${this.constructor.name}:${id}`);
+      console.log(`🗑️ Cache cleared for listing ID: ${id}`);
     }
+    
+    console.log(`🔍 Fetching listing ${id} from database`);
     const data = await this.listingService.findOne(id);
-    await this.cacheManager.set(
-      `${this.constructor.name}:${id}`,
-      data,
-      CACHE_TTL,
-    );
+    console.log(`✅ Listing data retrieved:`, {
+      id: data?.id,
+      hasBrand: !!data?.brand?.length,
+      hasAdvertisement: !!data?.advertisement?.length,
+      hasStatistics: !!data?.statistics?.length,
+      brandCount: data?.brand?.length || 0,
+      advertisementCount: data?.advertisement?.length || 0,
+    });
+    
+    // Only cache if we got data
+    if (data) {
+      await this.cacheManager.set(
+        `${this.constructor.name}:${id}`,
+        data,
+        CACHE_TTL,
+      );
+    }
     return data;
   }
 

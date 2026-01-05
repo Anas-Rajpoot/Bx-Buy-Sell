@@ -132,39 +132,39 @@ export default function AdminTeamMembers() {
     <div className="flex min-h-screen w-full bg-background">
       <AdminSidebar />
       
-      <main className="flex-1">
+      <main className="flex-1 w-full min-w-0 overflow-x-hidden">
         <AdminHeader />
 
-        <div className="p-8">
-          <div className="mb-6 grid grid-cols-3 gap-4">
-            <div className="rounded-lg border border-border bg-card p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-green-500" />
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="mb-4 sm:mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="rounded-lg border border-border bg-card p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Available</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Available</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold">
                     {members?.filter(m => m.availability_status === 'available').length || 0}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="rounded-lg border border-border bg-card p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <div className="rounded-lg border border-border bg-card p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Busy</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Busy</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold">
                     {members?.filter(m => m.availability_status === 'busy').length || 0}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="rounded-lg border border-border bg-card p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
+            <div className="rounded-lg border border-border bg-card p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Offline</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Offline</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold">
                     {members?.filter(m => m.availability_status === 'offline').length || 0}
                   </p>
                 </div>
@@ -172,21 +172,21 @@ export default function AdminTeamMembers() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between mb-6">
-            <div className="relative w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="relative flex-1 sm:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name, phone, username or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-muted/30 border-muted"
+                className="pl-8 sm:pl-10 text-sm sm:text-base bg-muted/30 border-muted h-9 sm:h-10"
               />
             </div>
             <Button 
               onClick={() => setIsAddDialogOpen(true)}
-              className="bg-accent text-accent-foreground hover:bg-accent/90"
+              className="bg-accent text-accent-foreground hover:bg-accent/90 text-sm sm:text-base h-9 sm:h-10"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
               Add Member
             </Button>
           </div>
@@ -227,39 +227,41 @@ export default function AdminTeamMembers() {
               </div>
             ) : (
               <>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border hover:bg-transparent">
-                      <TableHead className="text-muted-foreground">S No</TableHead>
-                      <TableHead className="text-muted-foreground">User name</TableHead>
-                      <TableHead className="text-muted-foreground">Email</TableHead>
-                      <TableHead className="text-muted-foreground">Roles</TableHead>
-                      <TableHead className="text-muted-foreground">Joined</TableHead>
-                      <TableHead className="text-muted-foreground">Availability</TableHead>
-                      <TableHead className="text-muted-foreground">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-border hover:bg-transparent">
+                          <TableHead className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap">S No</TableHead>
+                          <TableHead className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap">User name</TableHead>
+                          <TableHead className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">Email</TableHead>
+                          <TableHead className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">Roles</TableHead>
+                          <TableHead className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">Joined</TableHead>
+                          <TableHead className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap">Availability</TableHead>
+                          <TableHead className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap">Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                     {filteredMembers.map((member, index) => (
                       <TableRow 
                         key={member.id}
                         className="border-border hover:bg-muted/5"
                       >
-                        <TableCell className="font-medium">{index + 1}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10">
+                        <TableCell className="font-medium text-xs sm:text-sm whitespace-nowrap">{index + 1}</TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                               <AvatarImage src={member.avatar_url || undefined} />
-                              <AvatarFallback>
+                              <AvatarFallback className="text-xs">
                                 {member.full_name?.split(" ").map(n => n[0]).join("") || "U"}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="font-medium">{member.full_name || "Unknown"}</span>
+                            <span className="font-medium text-xs sm:text-sm">{member.full_name || "Unknown"}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{member.email}</TableCell>
-                        <TableCell className="capitalize">{member.role}</TableCell>
-                        <TableCell className="text-muted-foreground">
+                        <TableCell className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">{member.email}</TableCell>
+                        <TableCell className="capitalize text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">{member.role}</TableCell>
+                        <TableCell className="text-muted-foreground text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">
                           {new Date(member.created_at).toLocaleDateString()}
                         </TableCell>
                         <TableCell>
@@ -267,7 +269,7 @@ export default function AdminTeamMembers() {
                             value={member.availability_status}
                             onValueChange={(value) => handleAvailabilityChange(member.id, value)}
                           >
-                            <SelectTrigger className="w-[140px]">
+                            <SelectTrigger className="w-[100px] sm:w-[140px] h-8 sm:h-10 text-xs sm:text-sm">
                               <div className="flex items-center gap-2">
                                 <div 
                                   className={`w-2 h-2 rounded-full ${
@@ -303,33 +305,33 @@ export default function AdminTeamMembers() {
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="whitespace-nowrap">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreVertical className="h-4 w-4" />
+                              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10">
+                                <MoreVertical className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent 
                               align="end"
-                              className="w-40 bg-accent border-accent"
+                              className="w-36 sm:w-40 bg-accent border-accent text-xs sm:text-sm"
                             >
                               <DropdownMenuItem 
                                 onClick={() => navigate(`/admin/team/${member.id}`)}
                                 className="cursor-pointer"
                               >
-                                <Eye className="h-4 w-4 mr-2" />
+                                <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                                 View
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => handleEdit(member)}
                                 className="cursor-pointer"
                               >
-                                <Edit className="h-4 w-4 mr-2" />
+                                <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem className="cursor-pointer">
-                                <MessageSquare className="h-4 w-4 mr-2" />
+                                <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                                 Chat
                               </DropdownMenuItem>
                               <DropdownMenuItem 
@@ -339,14 +341,14 @@ export default function AdminTeamMembers() {
                                 }}
                                 className="cursor-pointer"
                               >
-                                <RefreshCw className="h-4 w-4 mr-2" />
+                                <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                                 Refresh
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => handleDelete(member)}
                                 className="cursor-pointer text-destructive"
                               >
-                                <Trash2 className="h-4 w-4 mr-2" />
+                                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -354,20 +356,22 @@ export default function AdminTeamMembers() {
                         </TableCell>
                       </TableRow>
                     ))}
-                  </TableBody>
-                </Table>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
 
-                <div className="flex items-center justify-between px-6 py-4 border-t border-border">
-                  <p className="text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t border-border">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Showing {filteredMembers.length} of {members?.length || 0}
                   </p>
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" disabled>
-                      ←
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" disabled>
+                      <span className="text-xs sm:text-sm">←</span>
                     </Button>
                     <Button 
                       size="icon"
-                      className={currentPage === 1 ? "bg-accent text-accent-foreground" : ""}
+                      className={`h-8 w-8 sm:h-10 sm:w-10 text-xs sm:text-sm ${currentPage === 1 ? "bg-accent text-accent-foreground" : ""}`}
                       onClick={() => setCurrentPage(1)}
                     >
                       1
@@ -375,6 +379,7 @@ export default function AdminTeamMembers() {
                     <Button 
                       variant="ghost" 
                       size="icon"
+                      className="h-8 w-8 sm:h-10 sm:w-10 text-xs sm:text-sm"
                       onClick={() => setCurrentPage(2)}
                     >
                       2
@@ -382,12 +387,13 @@ export default function AdminTeamMembers() {
                     <Button 
                       variant="ghost" 
                       size="icon"
+                      className="h-8 w-8 sm:h-10 sm:w-10 text-xs sm:text-sm"
                       onClick={() => setCurrentPage(3)}
                     >
                       3
                     </Button>
-                    <Button variant="ghost" size="icon">
-                      →
+                    <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10">
+                      <span className="text-xs sm:text-sm">→</span>
                     </Button>
                   </div>
                 </div>

@@ -12,6 +12,7 @@ interface ProductQuestion {
   id: string;
   question: string;
   answer_type: string;
+  option?: string[];
 }
 
 interface EditProductQuestionDialogProps {
@@ -33,12 +34,23 @@ export const EditProductQuestionDialog = ({ open, onOpenChange, question }: Edit
   const [questionText, setQuestionText] = useState("");
   const [hintText, setHintText] = useState("");
   const [questionType, setQuestionType] = useState("TEXT");
+  const [options, setOptions] = useState(""); // Options field for SELECT type
   const updateQuestion = useUpdateProductQuestion();
 
   useEffect(() => {
     if (question) {
       setQuestionText(question.question);
-      setQuestionType(question.answer_type);
+      // Map backend answer types to frontend
+      const answerTypeMap: Record<string, string> = {
+        'BOOLEAN': 'YESNO',
+      };
+      setQuestionType(answerTypeMap[question.answer_type] || question.answer_type);
+      // Set options if they exist
+      if (question.option && Array.isArray(question.option) && question.option.length > 0) {
+        setOptions(question.option.join(', '));
+      } else {
+        setOptions("");
+      }
     }
   }, [question]);
 
@@ -47,11 +59,18 @@ export const EditProductQuestionDialog = ({ open, onOpenChange, question }: Edit
       return;
     }
 
+    // Process options - split by comma if provided
+    let optionsArray: string[] = [];
+    if (questionType === "SELECT" && options.trim()) {
+      optionsArray = options.split(',').map(opt => opt.trim()).filter(opt => opt.length > 0);
+    }
+
     updateQuestion.mutate(
       {
         id: question.id,
         question: questionText.trim(),
         answer_type: questionType,
+        options: optionsArray,
       },
       {
         onSuccess: () => {
@@ -64,8 +83,17 @@ export const EditProductQuestionDialog = ({ open, onOpenChange, question }: Edit
   const handleCancel = () => {
     if (question) {
       setQuestionText(question.question);
-      setQuestionType(question.answer_type);
+      // Map backend answer types to frontend
+      const answerTypeMap: Record<string, string> = {
+        'BOOLEAN': 'YESNO',
+      };
+      setQuestionType(answerTypeMap[question.answer_type] || question.answer_type);
       setHintText("");
+      if (question.option && Array.isArray(question.option) && question.option.length > 0) {
+        setOptions(question.option.join(', '));
+      } else {
+        setOptions("");
+      }
     }
     onOpenChange(false);
   };
@@ -110,6 +138,18 @@ export const EditProductQuestionDialog = ({ open, onOpenChange, question }: Edit
               </SelectContent>
             </Select>
           </div>
+          {questionType === "SELECT" && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-black">Dropdown Options (comma-separated)</Label>
+              <Input
+                value={options}
+                onChange={(e) => setOptions(e.target.value)}
+                placeholder="Option 1, Option 2, Option 3 (separate options with commas)"
+                className="bg-gray-50 border-gray-200 text-black"
+              />
+              <p className="text-xs text-gray-500">Enter options separated by commas (e.g., "Option 1, Option 2, Option 3")</p>
+            </div>
+          )}
         </div>
         <div className="flex justify-center gap-3 pt-4">
           <Button 

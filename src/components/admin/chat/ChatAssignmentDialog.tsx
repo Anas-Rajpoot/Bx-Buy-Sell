@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-// TODO: Implement chat assignment backend endpoints
-// import { apiClient } from "@/lib/api";
+import { apiClient } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -51,28 +50,26 @@ export const ChatAssignmentDialog = ({
 
   const fetchTeamMembers = async () => {
     try {
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('user_id')
-        .in('role', ['admin', 'moderator']);
+      const response = await apiClient.getAllUsers();
+      if (!response.success || !Array.isArray(response.data)) {
+        throw new Error(response.error || "Failed to fetch team members");
+      }
 
-      if (roleError) throw roleError;
+      // Filter for ADMIN or MONITER roles
+      const teamMembersData = response.data
+        .filter((user: any) => user.role === 'ADMIN' || user.role === 'MONITER')
+        .map((user: any) => ({
+          id: user.id,
+          full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email,
+          avatar_url: user.profile_pic || null,
+        }));
 
-      const userIds = roleData.map(r => r.user_id);
-
-      const { data: profiles, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url')
-        .in('id', userIds);
-
-      if (profileError) throw profileError;
-
-      setTeamMembers(profiles || []);
-    } catch (error) {
+      setTeamMembers(teamMembersData);
+    } catch (error: any) {
       console.error('Error fetching team members:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch team members",
+        description: error.message || "Failed to fetch team members",
         variant: "destructive"
       });
     }
@@ -83,12 +80,11 @@ export const ChatAssignmentDialog = ({
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('conversations')
-        .update({ assigned_to: selectedMember })
-        .eq('id', conversationId);
-
-      if (error) throw error;
+      const response = await apiClient.assignMonitorToChat(conversationId, selectedMember);
+      
+      if (!response.success) {
+        throw new Error(response.error || "Failed to assign chat");
+      }
 
       toast({
         title: "Success",
@@ -96,11 +92,11 @@ export const ChatAssignmentDialog = ({
       });
       onAssigned();
       onOpenChange(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error assigning chat:', error);
       toast({
         title: "Error",
-        description: "Failed to assign chat",
+        description: error.message || "Failed to assign chat",
         variant: "destructive"
       });
     } finally {

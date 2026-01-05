@@ -6,7 +6,7 @@ export interface ProductQuestion {
   question: string;
   answer_type: string;
   answer_for: string;
-  option: any[];
+  option?: string[];
   created_at: string;
   updated_at: string;
 }

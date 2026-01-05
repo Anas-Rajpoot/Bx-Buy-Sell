@@ -53,11 +53,11 @@ export const ToolsStep = ({ formData: parentFormData, onNext, onBack }: ToolsSte
 
   if (isLoading) {
     return (
-      <div className="max-w-5xl">
-        <h1 className="text-3xl font-bold mb-2">Select Tools</h1>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+      <div className="max-w-5xl w-full">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Select Tools</h1>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="h-40 rounded-2xl border-2 border-border bg-card animate-pulse" />
+            <div key={i} className="h-40 sm:h-48 rounded-xl sm:rounded-2xl border-2 border-border bg-card animate-pulse" />
           ))}
         </div>
       </div>
@@ -65,17 +65,17 @@ export const ToolsStep = ({ formData: parentFormData, onNext, onBack }: ToolsSte
   }
 
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-5xl w-full">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="tools">Tools</TabsTrigger>
-          <TabsTrigger value="data-integrations">Data Integrations</TabsTrigger>
+        <TabsList className="mb-4 sm:mb-6">
+          <TabsTrigger value="tools" className="text-sm sm:text-base">Tools</TabsTrigger>
+          <TabsTrigger value="data-integrations" className="text-sm sm:text-base">Data Integrations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tools">
-          <h1 className="text-3xl font-bold mb-2">Select Tools</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Select Tools</h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8 mb-6 sm:mb-8">
             {tools && Array.isArray(tools) && tools.map((tool) => {
               const isSelected = selectedTools.includes(tool.id);
               
@@ -83,32 +83,32 @@ export const ToolsStep = ({ formData: parentFormData, onNext, onBack }: ToolsSte
                 <button
                   key={tool.id}
                   onClick={() => toggleTool(tool.id)}
-                  className={`flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all hover:scale-105 ${
+                  className={`flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all hover:scale-105 ${
                     isSelected 
                       ? "border-accent bg-accent/5" 
                       : "border-border bg-card hover:border-accent/50"
                   }`}
                 >
-                  <div className="w-20 h-20 flex items-center justify-center">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center">
                     <img src={tool.image_path} alt={tool.name} className="w-full h-full object-contain" />
                   </div>
-                  <span className="text-sm font-medium text-center">{tool.name}</span>
+                  <span className="text-xs sm:text-sm font-medium text-center">{tool.name}</span>
                 </button>
               );
             })}
           </div>
 
-          <div className="flex gap-4">
-            <Button onClick={onBack} variant="outline">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <Button onClick={onBack} variant="outline" className="w-full sm:w-auto">
               Back
             </Button>
-            <Button onClick={handleContinue}>
+            <Button onClick={handleContinue} className="w-full sm:w-auto">
               Continue
             </Button>
             <Button 
               onClick={() => setActiveTab("data-integrations")} 
               variant="outline"
-              className="bg-accent text-accent-foreground hover:bg-accent/90"
+              className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto"
             >
               Next: Data Integration
             </Button>

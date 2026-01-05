@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoreVertical, Share2, ExternalLink, AlertCircle, MessageSquare } from "lucide-react";
+import { MoreVertical, Share2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api";
+import redInfoIcon from "@/assets/red info icon.svg";
+import dateIcon from "@/assets/date.svg";
 
 interface ListingCardDashboardProps {
   id: string;
@@ -89,29 +91,47 @@ export const ListingCardDashboard = ({
   };
 
   return (
-    <div className="bg-card rounded-2xl overflow-hidden border border-border hover:shadow-lg transition-shadow">
+    <div
+      className="w-full max-w-[485px] flex flex-col gap-2 sm:gap-3 rounded-[20px] bg-[rgba(250,250,250,1)] relative p-3 sm:p-4"
+      style={{
+        minHeight: 'auto',
+      }}
+    >
       {/* Image */}
-      <div className="relative h-48 bg-muted">
+      <div
+        className="w-full rounded-[20px] overflow-hidden relative bg-[#e5e5e5]"
+        style={{
+          aspectRatio: '460/285',
+          minHeight: '200px',
+        }}
+      >
         {image_url ? (
-          <img src={image_url} alt={title} className="w-full h-full object-cover" />
+          <img 
+            src={image_url} 
+            alt={title} 
+            className="w-full h-full object-cover"
+          />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+          <div className="w-full h-full flex items-center justify-center text-[rgba(0,0,0,0.5)] font-['Lufga'] text-xs sm:text-sm md:text-base">
             No image
           </div>
         )}
 
+        {/* Category Badge */}
+        {category && (
+          <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 h-8 sm:h-9 px-3 sm:px-4 md:px-[17px] py-1.5 sm:py-2 md:py-[7px] rounded-full bg-[rgba(0,0,0,0.25)] backdrop-blur-[44px] flex items-center justify-center">
+            <span className="font-['Lufga'] font-medium text-xs sm:text-sm md:text-base leading-[140%] text-center text-white whitespace-nowrap">
+              {category}
+            </span>
+          </div>
+        )}
+
         {/* Top Actions */}
-        <div className="absolute top-3 right-3 flex gap-2">
-          <button
-            onClick={handleShare}
-            className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
-          >
-            <Share2 className="w-4 h-4" />
-          </button>
+        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-                <MoreVertical className="w-4 h-4" />
+              <button className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center border-none cursor-pointer shadow-sm">
+                <MoreVertical className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -121,110 +141,229 @@ export const ListingCardDashboard = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-
-        {/* Badges - Show Managed by EX OR Category, not both */}
-        <div className="absolute bottom-3 left-3 flex gap-2">
-          {managed_by_ex ? (
-            <Badge className="bg-[#D3FC50] text-black hover:bg-[#D3FC50]/90 font-semibold">
-              <div className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center mr-1">
-                <span className="text-[8px] font-bold">EX</span>
-              </div>
-              Managed by EX
-            </Badge>
-          ) : (
-            category && (
-              <Badge variant="secondary" className="bg-white/90 text-foreground">
-                {category}
-              </Badge>
-            )
-          )}
+          <button
+            onClick={handleShare}
+            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center border-none cursor-pointer shadow-sm"
+            title="Share"
+          >
+            <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+          </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        {/* Title and Status */}
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-bold text-lg flex-1">{title}</h3>
-          <Badge
-            variant={status === "published" ? "default" : "secondary"}
-            className={
-              status === "published"
-                ? "bg-blue-500 text-white"
-                : "bg-red-100 text-red-700"
-            }
+      <div className="flex flex-col mt-3 sm:mt-4 md:mt-4">
+        {/* First Row: Title and Status */}
+        <div className="flex items-start sm:items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+          <h3
+            className="flex-1 min-w-0 font-['Lufga'] font-semibold text-xs sm:text-sm md:text-base text-black m-0 line-clamp-2"
+            style={{
+              fontFamily: 'Lufga',
+              fontWeight: 600,
+              lineHeight: '140%',
+              letterSpacing: '0%',
+              color: 'rgba(0, 0, 0, 1)',
+            }}
           >
-            {status === "published" ? "Published" : "Draft"}
-          </Badge>
+            {title}
+          </h3>
+          <div
+            className={`flex items-center justify-center flex-shrink-0 h-9 px-4 py-1.5 rounded-full ${
+              status === 'published' 
+                ? 'bg-[rgba(0,103,255,0.1)]' 
+                : 'bg-[rgba(255,19,19,0.1)]'
+            }`}
+            style={{
+              minWidth: status === 'published' ? '90px' : '70px',
+            }}
+          >
+            <span
+              className="font-['Lufga'] font-medium text-sm sm:text-base"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+                color: status === 'published'
+                  ? 'rgba(0, 103, 255, 1)'
+                  : 'rgba(255, 19, 19, 1)',
+              }}
+            >
+              {status === 'published' ? 'Published' : 'Draft'}
+            </span>
+          </div>
         </div>
 
-        {/* Price */}
-        <p className="text-2xl font-bold mb-3">${price.toLocaleString()}</p>
+        {/* Second Row: Price and Notification/Message */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-3 mt-3 sm:mt-4 md:mt-4">
+          <p
+            className="font-['Lufga'] font-semibold text-2xl sm:text-3xl text-black m-0"
+            style={{
+              fontFamily: 'Lufga',
+              fontWeight: 600,
+              lineHeight: '140%',
+              letterSpacing: '0%',
+              color: 'rgba(0, 0, 0, 1)',
+            }}
+          >
+            ${price.toLocaleString()}
+          </p>
+          {status === 'published' && unread_messages_count > 0 ? (
+            <div className="flex items-center gap-2 flex-wrap">
+              <img src={redInfoIcon} alt="Info" className="w-5 h-5 flex-shrink-0" />
+              <span
+                className="font-['Lufga'] font-normal text-sm sm:text-base text-black/50"
+                style={{
+                  fontFamily: 'Lufga',
+                  fontWeight: 400,
+                  lineHeight: '140%',
+                  letterSpacing: '0%',
+                  color: 'rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                {unread_messages_count} unanswered {unread_messages_count === 1 ? 'message' : 'messages'}
+              </span>
+            </div>
+          ) : status === 'draft' ? (
+            <div className="flex items-center gap-2 flex-wrap">
+              <img src={redInfoIcon} alt="Info" className="w-5 h-5 flex-shrink-0" />
+              <span
+                className="font-['Lufga'] font-normal text-sm sm:text-base text-black/50"
+                style={{
+                  fontFamily: 'Lufga',
+                  fontWeight: 400,
+                  lineHeight: '140%',
+                  letterSpacing: '0%',
+                  color: 'rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                Edit or Publish your Listing
+              </span>
+            </div>
+          ) : null}
+        </div>
 
-        {/* Alert/Messages */}
+        {/* Third Row: Created Date and Requests */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mt-3 sm:mt-4 md:mt-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap whitespace-nowrap">
+            <img src={dateIcon} alt="Date" className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0" />
+            <span
+              className="font-['Lufga'] font-medium text-[10px] sm:text-xs md:text-sm text-black/50 whitespace-nowrap"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+                color: 'rgba(0, 0, 0, 0.5)',
+              }}
+            >
+              Created at:
+            </span>
+            <span
+              className="font-['Lufga'] font-medium text-[10px] sm:text-xs md:text-sm text-black whitespace-nowrap"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+                color: 'rgba(0, 0, 0, 1)',
+              }}
+            >
+              {formatDate(created_at)}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap whitespace-nowrap">
+            <span
+              className="font-['Lufga'] font-medium text-[10px] sm:text-xs md:text-sm text-black/50 whitespace-nowrap"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+                color: 'rgba(0, 0, 0, 0.5)',
+              }}
+            >
+              Requests:
+            </span>
+            <span
+              className="font-['Lufga'] font-medium text-[10px] sm:text-xs md:text-sm text-black whitespace-nowrap"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+                color: 'rgba(0, 0, 0, 1)',
+              }}
+            >
+              {requests_count}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Actions Buttons */}
+      <div
+        className="flex flex-col sm:flex-row gap-3 mt-auto pt-3 sm:pt-4 md:pt-4"
+      >
         {status === "draft" ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-            <AlertCircle className="w-4 h-4 text-orange-500" />
-            <span>Edit or Publish your Listing</span>
-          </div>
-        ) : unread_messages_count > 0 ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-            <MessageSquare className="w-4 h-4 text-orange-500" />
-            <span>{unread_messages_count} unanswered messages</span>
-          </div>
-        ) : null}
-
-        {/* Meta Info */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-          <div className="flex items-center gap-1">
-            <span>Created at:</span>
-            <span className="font-medium">{formatDate(created_at)}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span>Requests:</span>
-            <span className="font-medium">{requests_count}</span>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2">
-          {status === "draft" ? (
-            <>
-              <Button
-                variant="outline"
-                className="flex-1 rounded-full"
-                onClick={handleEdit}
-              >
-                Edit
-              </Button>
-              <Button
-                className="flex-1 rounded-full bg-[#D3FC50] text-black hover:bg-[#D3FC50]/90"
-                onClick={handlePublish}
-                disabled={isPublishing}
-              >
-                {isPublishing ? "Publishing..." : "Publish"}
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                className="flex-1 rounded-full"
-                onClick={() => toast.info("Push listing feature coming soon!")}
-              >
-                Push Listing
-                <ExternalLink className="w-4 h-4 ml-1" />
-              </Button>
-              <Button
-                className="flex-1 rounded-full bg-[#D3FC50] text-black hover:bg-[#D3FC50]/90"
-                onClick={() => toast.info("View requests feature coming soon!")}
-              >
-                View Requests
-              </Button>
-            </>
-          )}
-        </div>
+          <>
+            <Button
+              className="flex-1 sm:flex-1 h-12 sm:h-12 px-4 py-3 rounded-full bg-black text-white font-['Lufga'] font-medium text-sm sm:text-base border-none cursor-pointer"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+              }}
+              onClick={handleEdit}
+            >
+              Edit
+            </Button>
+            <Button
+              className="flex-1 sm:flex-1 h-12 sm:h-12 px-4 py-3 rounded-full bg-[rgba(174,243,31,1)] text-black font-['Lufga'] font-medium text-sm sm:text-base border-none cursor-pointer"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+              }}
+              onClick={handlePublish}
+              disabled={isPublishing}
+            >
+              {isPublishing ? "Publishing..." : "Publish"}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              className="flex-1 sm:flex-1 h-12 sm:h-12 px-4 py-3 rounded-full bg-black text-white font-['Lufga'] font-medium text-sm sm:text-base border-none cursor-pointer flex items-center justify-center gap-3"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+              }}
+              onClick={() => toast.info("Push listing feature coming soon!")}
+            >
+              <span className="hidden sm:inline">Push Listing</span>
+              <span className="sm:hidden">Push</span>
+              <ExternalLink className="w-4 h-4 text-white flex-shrink-0" />
+            </Button>
+            <Button
+              className="flex-1 sm:flex-1 h-12 sm:h-12 px-4 py-3 rounded-full bg-[rgba(174,243,31,1)] text-black font-['Lufga'] font-medium text-sm sm:text-base border-none cursor-pointer"
+              style={{
+                fontFamily: 'Lufga',
+                fontWeight: 500,
+                lineHeight: '140%',
+                letterSpacing: '0%',
+              }}
+              onClick={() => toast.info("View requests feature coming soon!")}
+            >
+              <span className="hidden sm:inline">View Requests</span>
+              <span className="sm:hidden">Requests</span>
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

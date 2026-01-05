@@ -1,4 +1,4 @@
-import { Heart, Share2, MessageSquare } from "lucide-react";
+import { Heart, Share2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import FlagIcon from "./FlagIcon";
@@ -19,7 +19,7 @@ interface ListingCardProps {
   revenueMultiple?: string;
   location: string;
   locationFlag?: string;
-  businessAge?: number;
+  businessAge?: string | number;
   netProfit?: string;
   revenue?: string;
   managedByEx?: boolean;
@@ -37,7 +37,7 @@ const ListingCard = ({
   revenueMultiple = "0.5x Revenue",
   location,
   locationFlag,
-  businessAge = 3,
+  businessAge,
   netProfit = "N/A",
   revenue = "N/A",
   managedByEx = false,
@@ -227,12 +227,13 @@ const ListingCard = ({
   };
 
   return (
-    <div className="group bg-card rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-border">
-      <div className="relative h-56 overflow-hidden bg-muted rounded-t-3xl">
+    <div className="group bg-white relative w-full rounded-lg shadow-sm" style={{ minHeight: '590.84px', height: 'auto' }}>
+      <div className="relative overflow-hidden bg-muted w-full" style={{ height: '285px', borderRadius: '20px' }}>
         <img
           src={image}
           alt={name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover"
+          style={{ borderRadius: '20px', display: 'block' }}
         />
         <div className="absolute top-4 right-4 flex flex-col gap-2">
           <button 
@@ -275,68 +276,157 @@ const ListingCard = ({
         </div>
       </div>
       
-      <div className="p-6">
-        <h3 className="text-2xl font-bold mb-2 text-foreground">{name}</h3>
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
-          {description}
-        </p>
+      <div className="flex flex-col w-full" style={{ marginTop: '20px', paddingLeft: '12px', paddingRight: '12px', gap: '16px', paddingBottom: '20px' }}>
+        <div className="flex flex-col" style={{ gap: '6px' }}>
+          <h3 
+            className="font-lufga"
+            style={{ 
+              fontFamily: 'Lufga',
+              fontWeight: 600,
+              fontStyle: 'normal',
+              fontSize: '18px',
+              lineHeight: '140%',
+              letterSpacing: '0%',
+              color: 'rgba(0, 0, 0, 1)'
+            }}
+          >
+            {name}
+          </h3>
+          <p 
+            className="font-lufga line-clamp-2"
+            style={{
+              fontFamily: 'Lufga',
+              fontWeight: 400,
+              fontStyle: 'normal',
+              fontSize: '14px',
+              lineHeight: '150%',
+              letterSpacing: '0%',
+              color: 'rgba(0, 0, 0, 0.5)',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}
+          >
+            {description}
+          </p>
+        </div>
         
-        <div className="flex items-center gap-2 mb-5 flex-wrap">
-          <span className="text-3xl font-bold text-foreground">{price}</span>
-          <Badge variant="outline" className="text-xs font-normal border-border">
-            {profitMultiple}
-          </Badge>
-          <Badge variant="outline" className="text-xs font-normal border-border">
-            {revenueMultiple}
-          </Badge>
+        <div className="flex items-center justify-between">
+          <span className="font-lufga font-semibold" style={{ fontSize: '28px', lineHeight: '140%', letterSpacing: '0%', color: '#000000' }}>{price}</span>
+          <div className="flex items-center bg-white border rounded-full overflow-hidden" style={{ borderWidth: '1px', height: '25px' }}>
+            <div 
+              className="flex items-center justify-center"
+              style={{
+                paddingTop: '5px',
+                paddingRight: '12px',
+                paddingBottom: '5px',
+                paddingLeft: '12px',
+                borderRight: '1px solid #e5e7eb'
+              }}
+            >
+              <span className="font-lufga font-medium" style={{ fontSize: '10px', lineHeight: '150%' }}>
+              {profitMultiple}
+              </span>
+            </div>
+            <div 
+              className="flex items-center justify-center"
+              style={{
+                paddingTop: '5px',
+                paddingRight: '12px',
+                paddingBottom: '5px',
+                paddingLeft: '12px'
+              }}
+            >
+              <span className="font-lufga font-medium" style={{ fontSize: '10px', lineHeight: '150%' }}>
+              {revenueMultiple}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-5 text-sm">
+        <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center gap-2">
             <FlagIcon country={location} className="w-5 h-4" />
-            <span className="text-muted-foreground">Location:</span>
-            <span className="font-semibold text-foreground">{location}</span>
+            <span className="font-lufga font-medium" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#00000080' }}>
+              Location:
+            </span>
+            <span className="font-lufga font-medium" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#000000' }}>
+              {location}
+            </span>
           </div>
           <div className="text-right">
-            <span className="text-muted-foreground">Business Age:</span>
-            <span className="font-semibold text-foreground ml-1">{businessAge}</span>
+            <span className="font-lufga font-medium" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#00000080' }}>
+              Business Age:
+            </span>
+            <span className="font-lufga font-medium ml-1" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#000000' }}>
+              {businessAge || 'N/A'}
+            </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-6 text-sm pb-6 border-b border-border">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-muted-foreground mb-1.5">Net Profit:</div>
-            <div className="font-bold text-foreground">{netProfit}</div>
+            <span className="font-lufga font-medium" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#00000080' }}>
+              Net Profit:
+            </span>
+            <span className="font-lufga font-medium ml-1" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#000000' }}>
+              {netProfit || "N/A"}
+            </span>
           </div>
           <div className="text-right">
-            <div className="text-muted-foreground mb-1.5">Revenue:</div>
-            <div className="font-bold text-foreground">{revenue}</div>
+            <span className="font-lufga font-medium" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#00000080' }}>
+              Revenue:
+            </span>
+            <span className="font-lufga font-medium ml-1" style={{ fontSize: '16px', lineHeight: '140%', letterSpacing: '0%', color: '#000000' }}>
+              {revenue || "N/A"}
+            </span>
           </div>
         </div>
 
         <div className="flex gap-3">
           <Button 
-            variant="outline" 
-            className="flex-1 rounded-full border-2 border-foreground text-foreground hover:bg-foreground hover:text-background font-semibold"
+            className="bg-black text-white rounded-full font-semibold hover:bg-black"
             onClick={handleContactSeller}
             disabled={isStartingChat || !sellerId}
+            style={{
+              width: '226.5px',
+              height: '48px',
+              gap: '10px',
+              borderRadius: '60px',
+              paddingTop: '13px',
+              paddingRight: '10px',
+              paddingBottom: '13px',
+              paddingLeft: '10px'
+            }}
           >
             {isStartingChat ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-foreground mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 Starting...
               </>
             ) : (
-              <>
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Contact Seller
-              </>
+              'Contact Seller'
             )}
           </Button>
           <Button 
-            variant="accent" 
-            className="flex-1 rounded-full font-semibold"
+            className="font-lufga font-medium rounded-full text-black"
             onClick={() => listingId && navigate(`/listing/${listingId}`)}
+            style={{
+              width: '226.5px',
+              height: '48px',
+              gap: '10px',
+              borderRadius: '60px',
+              paddingTop: '13px',
+              paddingRight: '10px',
+              paddingBottom: '13px',
+              paddingLeft: '10px',
+              backgroundColor: '#AEF31F',
+              fontSize: '16px',
+              lineHeight: '140%',
+              letterSpacing: '0%'
+            }}
           >
             View Listing
           </Button>

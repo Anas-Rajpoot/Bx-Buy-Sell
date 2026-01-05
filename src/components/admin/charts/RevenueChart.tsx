@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { TrendingUp } from "lucide-react";
 
@@ -19,21 +19,23 @@ const data = [
 ];
 
 export const RevenueChart = () => {
+  const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
+  
   return (
-    <Card className="col-span-full">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <div>
-          <h3 className="font-semibold mb-2">Revenue</h3>
-          <p className="text-3xl font-bold">2,129,585</p>
-          <div className="flex items-center gap-2 text-sm mt-2">
-            <span className="text-accent flex items-center gap-1">
-              15% <TrendingUp className="w-3 h-3" />
+    <Card className="col-span-full shadow-lg border-border">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4">
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-foreground">Revenue</h3>
+          <p className="text-3xl sm:text-4xl font-bold text-foreground">{totalRevenue.toLocaleString()}</p>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-accent flex items-center gap-1 font-medium">
+              15% <TrendingUp className="w-3.5 h-3.5" />
             </span>
             <span className="text-muted-foreground">Over All Profit</span>
           </div>
         </div>
         <Select defaultValue="monthly">
-          <SelectTrigger className="w-24">
+          <SelectTrigger className="w-28 h-9 border-border">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -43,36 +45,75 @@ export const RevenueChart = () => {
           </SelectContent>
         </Select>
       </CardHeader>
-      <CardContent>
-        <ChartContainer
-          config={{
-            revenue: {
-              label: "Revenue",
-              color: "hsl(var(--accent))",
-            },
-            profit: {
-              label: "Profit",
-              color: "hsl(72 100% 51% / 0.3)",
-            },
-          }}
-          className="h-[250px]"
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Area type="monotone" dataKey="profit" stroke="hsl(72 100% 51% / 0.5)" strokeDasharray="3 3" fill="none" strokeWidth={2} />
-              <Area type="monotone" dataKey="revenue" stroke="hsl(var(--accent))" fill="url(#colorRevenue)" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+      <CardContent className="pt-0 overflow-hidden">
+        <div className="w-full overflow-x-auto">
+          <ChartContainer
+            config={{
+              revenue: {
+                label: "Revenue",
+                color: "hsl(var(--accent))",
+              },
+              profit: {
+                label: "Profit",
+                color: "#FFD700",
+              },
+            }}
+            className="h-[300px] sm:h-[350px] w-full min-w-[400px]"
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 10, right: 15, left: 10, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#FFD700" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#FFD700" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  interval={0}
+                />
+                <YAxis 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  width={50}
+                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                />
+                <ChartTooltip 
+                  content={<ChartTooltipContent />}
+                  cursor={{ stroke: "hsl(var(--accent))", strokeWidth: 1, strokeDasharray: "5 5" }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="profit" 
+                  stroke="#FFD700" 
+                  strokeDasharray="4 4" 
+                  fill="url(#colorProfit)" 
+                  strokeWidth={2} 
+                  fillOpacity={0.6}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="hsl(var(--accent))" 
+                  fill="url(#colorRevenue)" 
+                  strokeWidth={2}
+                  fillOpacity={0.6}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );

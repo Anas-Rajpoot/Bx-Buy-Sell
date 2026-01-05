@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useBrandQuestions } from "@/hooks/useBrandQuestions";
 import { toast } from "sonner";
+import FlagIcon from "@/components/FlagIcon";
 
 interface BrandInformationStepProps {
   formData?: any;
@@ -80,13 +81,26 @@ export const BrandInformationStep = ({ formData: parentFormData, onNext, onBack 
     
     switch (question.answer_type) {
       case "TEXT":
+        // Check if this is a location field (Business Location or similar)
+        const isLocationField = question.question.toLowerCase().includes('location') || 
+                                question.question.toLowerCase().includes('address') ||
+                                question.question.toLowerCase().includes('country');
+        
         return (
-          <Input
-            value={value}
-            onChange={(e) => setFormData({ ...formData, [question.id]: e.target.value })}
-            placeholder="Enter your answer"
-            className="bg-muted/50"
-          />
+          <div className="relative">
+            <Input
+              value={value}
+              onChange={(e) => setFormData({ ...formData, [question.id]: e.target.value })}
+              placeholder="Enter your answer"
+              className="bg-muted/50"
+              style={isLocationField && value ? { paddingRight: '40px' } : {}}
+            />
+            {isLocationField && value && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <FlagIcon country={value} className="w-5 h-4" />
+              </div>
+            )}
+          </div>
         );
       
       case "NUMBER":
@@ -174,39 +188,39 @@ export const BrandInformationStep = ({ formData: parentFormData, onNext, onBack 
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">Brand Information</h1>
-        <div className="text-muted-foreground">Loading questions...</div>
+      <div className="max-w-4xl w-full">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 md:mb-8">Brand Information</h1>
+        <div className="text-sm sm:text-base text-muted-foreground">Loading questions...</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">Brand Information</h1>
+    <div className="max-w-4xl w-full">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 md:mb-8">Brand Information</h1>
 
-      <div className="bg-card rounded-xl p-8 border border-border space-y-6">
+      <div className="bg-card rounded-xl p-4 sm:p-6 md:p-8 border border-border space-y-4 sm:space-y-6">
         {questions.length === 0 ? (
-          <div className="text-center text-muted-foreground py-8">
+          <div className="text-center text-sm sm:text-base text-muted-foreground py-6 sm:py-8">
             No brand information questions available. Please contact the administrator.
           </div>
         ) : (
           questions.map((question: any) => (
-            <div key={question.id} className="space-y-3">
-              <Label className="text-base font-semibold">{question.question}</Label>
+            <div key={question.id} className="space-y-2 sm:space-y-3">
+              <Label className="text-sm sm:text-base font-semibold">{question.question}</Label>
               {renderField(question)}
             </div>
           ))
         )}
       </div>
 
-      <div className="flex gap-4 mt-8">
-        <Button variant="outline" onClick={onBack}>
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
+        <Button variant="outline" onClick={onBack} className="w-full sm:w-auto">
           Back
         </Button>
         <Button 
           onClick={handleContinue}
-          className="bg-accent hover:bg-accent/90 text-accent-foreground ml-auto px-16"
+          className="bg-accent hover:bg-accent/90 text-accent-foreground w-full sm:w-auto sm:ml-auto sm:px-16"
         >
           Continue
         </Button>

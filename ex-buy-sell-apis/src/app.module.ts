@@ -26,6 +26,7 @@ import { ProhibitedWordModule } from './prohibited-word/prohibited-word.module';
 import { FinancialAdminModule } from './financial-admin/financial-admin.module';
 import { QuestionAdminModule } from './question-admin/question-admin.module';
 import { AdminSocialAccountModule } from './admin-social-account/admin-social-account.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { AdminSocialAccountModule } from './admin-social-account/admin-social-ac
     FinancialAdminModule,
     QuestionAdminModule,
     AdminSocialAccountModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthGuard, RolesGuard, ResponseInterceptor, LogInterceptor],

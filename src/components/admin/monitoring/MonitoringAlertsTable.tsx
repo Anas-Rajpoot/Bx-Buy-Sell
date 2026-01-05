@@ -44,61 +44,32 @@ export const MonitoringAlertsTable = ({ searchQuery }: MonitoringAlertsTableProp
   useEffect(() => {
     fetchAlerts();
 
-    const channel = supabase
-      .channel('monitoring-alerts')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'monitoring_alerts'
-      }, () => {
-        fetchAlerts();
-      })
-      .subscribe();
+    // TODO: Implement real-time monitoring alerts with WebSocket/Backend API
+    // Currently using polling as fallback
+    const interval = setInterval(() => {
+      fetchAlerts();
+    }, 30000); // Poll every 30 seconds
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, []);
 
   const fetchAlerts = async () => {
     try {
-      const { data: alertsData, error } = await supabase
-        .from('monitoring_alerts')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Fetch profiles for reporter, problematic_user, and responsible
-      const alertsWithProfiles = await Promise.all(
-        (alertsData || []).map(async (alert) => {
-          const [reporter, problematicUser, responsible] = await Promise.all([
-            alert.reporter_id
-              ? supabase.from('profiles').select('full_name, avatar_url').eq('id', alert.reporter_id).single()
-              : Promise.resolve({ data: null }),
-            alert.problematic_user_id
-              ? supabase.from('profiles').select('full_name, avatar_url').eq('id', alert.problematic_user_id).single()
-              : Promise.resolve({ data: null }),
-            alert.responsible_id
-              ? supabase.from('profiles').select('full_name, avatar_url').eq('id', alert.responsible_id).single()
-              : Promise.resolve({ data: null }),
-          ]);
-
-          return {
-            ...alert,
-            reporter: reporter.data,
-            problematic_user: problematicUser.data,
-            responsible: responsible.data,
-          };
-        })
-      );
-
-      setAlerts(alertsWithProfiles);
+      // TODO: Implement backend API endpoint for monitoring alerts
+      // const response = await apiClient.getMonitoringAlerts();
+      // if (response.success) {
+      //   setAlerts(response.data);
+      // }
+      
+      // Placeholder: Empty alerts for now
+      setAlerts([]);
     } catch (error) {
       console.error('Error fetching alerts:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch monitoring alerts",
+        description: "Failed to fetch monitoring alerts. Backend API not implemented yet.",
         variant: "destructive"
       });
     } finally {
@@ -108,16 +79,20 @@ export const MonitoringAlertsTable = ({ searchQuery }: MonitoringAlertsTableProp
 
   const updateStatus = async (alertId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('monitoring_alerts')
-        .update({ status: newStatus })
-        .eq('id', alertId);
-
-      if (error) throw error;
-
+      // TODO: Implement backend API endpoint for updating alert status
+      // const response = await apiClient.updateMonitoringAlertStatus(alertId, newStatus);
+      // if (response.success) {
+      //   fetchAlerts(); // Refresh alerts
+      //   toast({
+      //     title: "Success",
+      //     description: "Alert status updated successfully"
+      //   });
+      // }
+      
       toast({
-        title: "Success",
-        description: "Alert status updated successfully"
+        title: "Not Implemented",
+        description: "Backend API for updating alert status not implemented yet.",
+        variant: "default"
       });
     } catch (error) {
       console.error('Error updating status:', error);

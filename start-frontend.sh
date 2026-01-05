@@ -11,12 +11,10 @@ if [ ! -f .env ]; then
     echo "Creating .env template..."
     echo ""
     cat > .env << EOF
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-anon-key
-VITE_API_BASE_URL=http://localhost:1230
+VITE_API_BASE_URL=http://localhost:5000
 VITE_API_BEARER_TOKEN=
 EOF
-    echo "✅ Created .env file. Please update with your Supabase credentials!"
+    echo "✅ Created .env file. Please update with your API credentials!"
     echo ""
 fi
 

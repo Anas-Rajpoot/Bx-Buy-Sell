@@ -10,12 +10,10 @@ if not exist .env (
     echo Creating .env template...
     echo.
     (
-        echo VITE_SUPABASE_URL=https://your-project.supabase.co
-        echo VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-anon-key
-        echo VITE_API_BASE_URL=http://localhost:1230
+        echo VITE_API_BASE_URL=http://localhost:5000
         echo VITE_API_BEARER_TOKEN=
     ) > .env
-    echo ✅ Created .env file. Please update with your Supabase credentials!
+    echo ✅ Created .env file. Please update with your API credentials!
     echo.
 )
 

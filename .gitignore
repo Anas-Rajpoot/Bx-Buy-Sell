@@ -57,3 +57,28 @@ build/
 # OS files
 Thumbs.db
 .DS_Store
+
+# Test and debug files
+*test-debug*.js
+*check-debug*.js
+test-db-connection.js
+
+# Archive files (should not be in repository)
+*.rar
+*.zip
+*.7z
+*.tar.gz
+
+# Lock files (keep package-lock.json, remove others)
+bun.lockb
+yarn.lock
+pnpm-lock.yaml
+
+# Temporary files
+*New Text Document*
+*.tmp
+*.temp
+remove-secrets-from-history.md
+
+# Supabase (if not being used - uncomment if needed)
+# supabase/
